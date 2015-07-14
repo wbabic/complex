@@ -14,4 +14,14 @@
                  [org.clojure/clojurescript "0.0-3308"]
                  [org.clojure/test.check "0.7.0"]
                  [prismatic/schema "0.4.3"]
-                 [com.cognitect/transit-cljs "0.8.220"]])
+                 [com.cognitect/transit-cljs "0.8.220"]]
+
+  :cljsbuild
+  {:builds [{:id "test"
+             :source-paths ["src" "test"]
+             :notify-command ["phantomjs" "phantom/unit-test.js" "phantom/unit-test.html"]
+             :compiler {:output-to "target/testable.js"
+                        :optimizations :whitespace
+                        :pretty-print true}}]
+   :test-commands {"test" ["phantomjs" "phantom/unit-test.js" "phantom/unit-test.html"]}}
+)
