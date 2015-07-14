@@ -8,7 +8,8 @@
   {:dev {:plugins [[lein-cljsbuild "1.0.6"]
                    [lein-figwheel "0.3.7"
                     :exclusions [org.clojure/clojure
-                                 org.codehaus.plexus/plexus-utils]]]}}
+                                 org.codehaus.plexus/plexus-utils]]]
+         :aliases {"cleantest" ["do" "clean," "test," "cljsbuild" "test"]}}}
 
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "0.0-3308"]
