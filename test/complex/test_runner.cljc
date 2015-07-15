@@ -3,7 +3,7 @@
                [clojure.test :refer [run-tests]]
                :cljs
                [cljs.test :refer-macros [run-tests]])
-            [complex.complex-test]))
+            [complex.number-test]))
 
 #?(:cljs [(enable-console-print!)])
 
@@ -11,12 +11,12 @@
   #?(:cljs
      (if (cljs.test/successful?
           (run-tests
-           'complex.complex-test))
+           'complex.number-test))
        0
        1)
      :clj
      (if (clojure.test/successful?
           (run-tests
-           'complex.complex-test))
+           'complex.number-test))
        "Success"
        "Failure")))

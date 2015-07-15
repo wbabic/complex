@@ -1,6 +1,6 @@
-(ns complex.complex-test
+(ns complex.number-test
   (:require
-   [complex.number :as c
+   [complex.number :as n
     :refer [mult div add sub minus recip infinity zero one i coords arg length]]
    #?@(:clj
        [[clojure.test :refer :all]
@@ -17,43 +17,28 @@
 
 (deftest test-arg
   (testing "complex arg"
-    (let [z1 (c/c [1 1])
-          z2 (c/c [1 -1])]
+    (let [z1 (n/c [1 1])
+          z2 (n/c [1 -1])]
       (are [a b] (== a b)
-           45 (c/rad->deg (arg z1))
-           315 (c/rad->deg (arg z2))
-           180 (c/rad->deg (arg (minus one)))
-           90(c/rad->deg (arg i))))))
+           45 (n/rad->deg (arg z1))
+           315 (n/rad->deg (arg z2))
+           180 (n/rad->deg (arg (minus one)))
+           90(n/rad->deg (arg i))))))
 
 (deftest div-by-zero
   (testing "divide by zero"
     (is (= infinity (div one zero)))
     (is (= zero (div one infinity)))))
 
-(comment
-  ;; to run these tests from a clojure repl:
-  (require 'complex.complex-test :reload)
-  (in-ns 'complex.complex-test)
-  (clojure.test/run-tests)
-  )
-
 (def complex-gen
-  (gen/fmap c/complex-rect (gen/vector gen/ratio 2)))
+  (gen/fmap n/c (gen/vector gen/ratio 2)))
 
 (def non-zero-complex-gen
   (gen/such-that #(not (= zero %)) complex-gen))
 
-(def gen-circle
-  (gen/vector complex-gen 3))
-
 (def complex-prop
   (prop/for-all [z complex-gen]
-                (satisfies? c/Complex z)))
-
-(comment
-  (mapv #(mapv coords %) (gen/sample gen-circle))
-  (tc/quick-check 100 complex-prop)
-  )
+                (satisfies? n/Complex z)))
 
 (defspec complex-gen-satisfies-protocol complex-prop)
 
@@ -76,3 +61,10 @@
                   (almost-zero? r))))
 
 (defspec mult-inverse mult-inverse-prop)
+
+(comment
+  ;; to run these tests from a clojure repl:
+  (require 'complex.complex-test :reload)
+  (in-ns 'complex.complex-test)
+  (clojure.test/run-tests)
+  )
