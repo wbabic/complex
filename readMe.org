@@ -1,14 +1,20 @@
-# complex
+* complex
+A cross platform library for complex numbers, geometry and transforms
 
-A Clojure library designed to ... well, that part is up to you.
+** Usage
+run cljs test using phantomjs
+#+BEGIN_SRC shell
+  lein cleantest
+#+END_SRC
 
-## Usage
+run clojure test from the repl
+#+BEGIN_SRC shell
+  lein repl
+#+END_SRC
 
-FIXME
+#+BEGIN_SRC clojure
+  (require 'complex.test-runner)
+  (complex.test-runner/runner)
+#+END_SRC
 
-## License
-
-Copyright © 2015 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+how to get lein test to use complex.test-runner?

@@ -1,5 +1,5 @@
 (defproject complex "0.1.0"
-  :description "Library for complex numbers. geometry and transforms"
+  :description "Cross platform library for complex numbers. geometry and transforms"
   :url "http://wbabic.github.io"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
@@ -20,7 +20,7 @@
   :cljsbuild
   {:builds [{:id "test"
              :source-paths ["src" "test"]
-             :notify-command ["phantomjs" "phantom/unit-test.js" "phantom/unit-test.html"]
+             ;; :notify-command ["phantomjs" "phantom/unit-test.js" "phantom/unit-test.html"]
              :compiler {:output-to "target/testable.js"
                         :optimizations :whitespace
                         :pretty-print true}}]
