@@ -73,6 +73,23 @@
   ([P degrees]
    (conjugate (rotation degrees) (translation P))))
 
+(def transforms
+  [{:name "Identity"
+    :text "z -> z"
+    :transform I}
+   {:name "Inversion"
+    :text "z -> 1/z"
+    :transform J}
+   {:name "Cayley"
+    :text "z -> (z-i)/(z+i)"
+    :transform T3}
+   {:name "T2"
+    :text "z -> (z-1)/(z+1)"
+    :transform T2}
+   {:name "S1"
+    :text "z -> (1 + 0.4i)z"
+    :transform S1}])
+
 (comment
   (require 'complex.transform :reload)
   (in-ns 'complex.transform)
