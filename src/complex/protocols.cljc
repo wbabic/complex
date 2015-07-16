@@ -38,3 +38,11 @@
   (require 'complex.protocols :reload)
   (in-ns 'complex.protocols)
   )
+
+;; generalized circle
+;; center radius
+;; general equation [A B C D] as a hermitian matrix
+;; parameterized equation (at + b)/(ct + d)
+;; circumcircle of a triangle
+;; collinear?
+;; image of
