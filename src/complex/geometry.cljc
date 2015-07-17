@@ -1,7 +1,8 @@
 (ns complex.geometry
   (:require
    [complex.number :as n
-    :refer [mult div add sub minus recip infinity zero one i coords arg length conjugate]]))
+    :refer [mult div add sub minus recip infinity zero one i coords arg length conjugate]]
+   [schema.core :as s :include-macros true]))
 
 ;; inversion in a general circle C
 ;; where C has center P and radius r
@@ -67,7 +68,57 @@
     [:circle {:center (coords (minus alpha-bar))
               :radius (length (sub (mult alpha alpha-bar) beta))}]))
 
+;; representation of circles and lines by hermitian matrices
+;; from schwerdtfeger
+(defn circle-as-matrix
+  "return matrix representing circle with given center and radius"
+  [center radius]
+  (let [gamma (n/c center)
+        A 1
+        B (n/minus (conjugate gamma))
+        C gamma
+        D (- (n/len-sq gamma) (* radius radius))]
+    [A B C D]))
+
+(defn line-as-matrix
+  "return matrix representing line
+  through origin and perpendicular to complex number b"
+  [b]
+  (let [b-bar (conjugate b)]
+    [0 b-bar b 0]))
+
+;; methods that take a generalized circle
+(defn to-string [[A B C D]]
+  (pr-str [A (coords B) (coords C) D]))
+
+(defn vaild-circle?
+  "determine if given vector represents a hermitian matrix
+need A and B to be real and B anc C complex conjugates"
+  [[A B C D]]
+  (assert (and (number? A) (number? D)))
+  ;; (= B (conjugate C))
+  true)
+
+(defn to-circle
+  "return center and radius for given hermitian matrix"
+  [[A B C D]]
+  (let [c (mult C (/ (- A)))
+        c-coords (coords c)
+        c-sq (n/len-sq c)
+        r-sq (- c-sq (/ D A))
+        r (if (< r-sq 0)
+            (n/sqrt r-sq)
+            (Math/sqrt r-sq))]
+    [:circle {:center c-coords :radius r}]))
+
+(defn determinant
+  "determinant of a hermitian matrix"
+  [[A B C D]]
+  (let [b (n/len-sq B)]
+    (- (* A D) b)))
+
 (comment
   (require 'complex.geometry :reload)
   (in-ns 'complex.geometry)
+
   )

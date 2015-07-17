@@ -9,12 +9,13 @@
                    [lein-figwheel "0.3.7"
                     :exclusions [org.clojure/clojure
                                  org.codehaus.plexus/plexus-utils]]]
-         :aliases {"cleantest" ["do" "clean," "test," "cljsbuild" "test"]}}}
+         :aliases {"cleantest" ["do" "clean," "cljsbuild" "test"]}}}
 
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "0.0-3308"]
                  [org.clojure/test.check "0.7.0"]
                  [prismatic/schema "0.4.3"]
+                 [com.cognitect/transit-clj "0.8.275"]
                  [com.cognitect/transit-cljs "0.8.220"]]
 
   :cljsbuild

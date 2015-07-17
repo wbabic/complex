@@ -42,6 +42,21 @@
           s-uc (apply g/param->standard p-uc)]
       (is (= uc s-uc)))))
 
+(deftest hernitian-unit-circle
+  (testing "unit circle as hermitian matrix"
+    (let [uc [:circle {:center [0 0] :radius 1.0}]
+          h-c (g/circle-as-matrix [0 0] 1)]
+      (is (= uc (g/to-circle h-c)))
+      (is (= -1 (g/determinant h-c)))
+      (is (= "[1 [0 0] [0 0] -1]" (g/to-string h-c))))))
+
+(deftest hernitian-imaginary-circle
+  (testing "imaginary circle as hermitian matrix"
+    (let [ic [:circle {:center [0 0] :radius (n/c [0 1.0])}]
+          h [1 zero zero 1]]
+      (is (= ic (g/to-circle h)))
+      (is (= 1 (g/determinant h))))))
+
 (comment
   (def gen-circle
     (gen/vector nt/complex-gen 3))
@@ -56,4 +71,6 @@
   (require 'complex.geometry-test :reload)
   (in-ns 'complex.geometry-test)
   (clojure.test/run-tests)
+  ;; or
+  (clojure.test/run-tests 'complex.geometry-test)
   )

@@ -141,7 +141,10 @@
     (= w zero) infinity
     :else (times z (recip w))))
 
-(defn len-sq [z] (mult z (conjugate z)))
+(defn len-sq [z]
+  (let [w (mult z (conjugate z))
+        [x y] (coords w)]
+    x))
 
 (defn distance
   "distance between two complex numbers

@@ -1,4 +1,19 @@
-(ns complex.protocols)
+(ns complex.protocols
+  "Protocol definitions with schema"
+  (:require [schema.core :as s :include-macros true]))
+
+(comment
+  (defprotocol Point
+    (coords [_]))
+
+  (defprotocol Vec2
+    (length [])
+    (angle []))
+
+  (defprocol AlmostEquals
+    (almost-equals [_ other]))
+
+  )
 
 ;; Complex arithmetic protocol
 (defprotocol Complex
@@ -39,10 +54,21 @@
   (in-ns 'complex.protocols)
   )
 
-;; generalized circle
-;; center radius
-;; general equation [A B C D] as a hermitian matrix
-;; parameterized equation (at + b)/(ct + d)
-;; circumcircle of a triangle
+;; representaions of a circle
+;; as a map: {center Point :radius s/Num}
+;; or {center Complex :radius s/Num}
+;; or {center Complex :radius Complex}
+;; as a record with fields pf center radius
+;; as a hermitian matrix [A B C D]
+;; as parameterized equation (at + b)/(ct + d)
+;; as circumcircle of a triangle,
+;; a vector of 3 Points or Complex numbers [z1 z2 z3]
+
+;; functions relevant to circles
 ;; collinear?
-;; image of
+;; image
+;; or tranform
+;; render
+
+(defprotocol Circle
+  (standard-fromat [_] "return vector [:circle {:center [x y] :redius r}]"))
