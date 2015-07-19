@@ -57,6 +57,44 @@
       (is (= ic (g/to-circle h)))
       (is (= 1 (g/determinant h))))))
 
+(deftest hermitian-line
+  (testing "line perpendicular to [2 3]"
+    (let [b (n/c [2 3])
+          l (g/line-as-matrix b)
+          l-coords (g/line-coords l)]
+      (is (= [4 6 0] l-coords))
+      (is (g/point-on-line? [-3 2] l-coords))
+      (is (g/point-on-line? [3 -2] l-coords)))))
+
+(deftest line-through-two-points
+  (testing "line through [1 0] [0 1]"
+    (let [l [:line [1 0] [0 1]]
+          l-coords (g/line-coords l)]
+      (is (= [1 1 1] l-coords))
+      (is (g/point-on-line? [1 0] l-coords))
+      (is (g/point-on-line? [(/ 2) (/ 2)] l-coords)))))
+
+(deftest intersection-lines-point
+  (testing "interssection of two lines"
+    (let [o [0 0]
+          e1 [1 0]
+          e2 [0 1]
+          l1 [:line o e1]
+          l2 [:line o e2]]
+      (is (= [0 0] (g/intersection l1 l2))))))
+
+(deftest intersection-lines-complex
+  (testing "intersection of two lines using complex points"
+    (let [l1 [zero one]
+          l2 [zero i]]
+      (is (= [0 0] (g/intersection l1 l2))))))
+
+(deftest circumcurcle
+  (testing "circumcrle of three points"
+    (let [l [one i (minus one)]
+          uc [:circle {:center [0 0] :radius 1.0}]]
+      (is (= uc (g/circumcircle l))))))
+
 (comment
   (def gen-circle
     (gen/vector nt/complex-gen 3))

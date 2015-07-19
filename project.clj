@@ -1,4 +1,4 @@
-(defproject complex "0.1.0"
+(defproject complex "0.1.1"
   :description "Cross platform library for complex numbers. geometry and transforms"
   :url "http://wbabic.github.io"
   :license {:name "Eclipse Public License"
@@ -13,15 +13,13 @@
 
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "0.0-3308"]
+                 [org.clojure/core.match "0.3.0-alpha4"]
                  [org.clojure/test.check "0.7.0"]
-                 [prismatic/schema "0.4.3"]
-                 [com.cognitect/transit-clj "0.8.275"]
-                 [com.cognitect/transit-cljs "0.8.220"]]
+                 [prismatic/schema "0.4.3"]]
 
   :cljsbuild
   {:builds [{:id "test"
              :source-paths ["src" "test"]
-             ;; :notify-command ["phantomjs" "phantom/unit-test.js" "phantom/unit-test.html"]
              :compiler {:output-to "target/testable.js"
                         :optimizations :whitespace
                         :pretty-print true}}]
