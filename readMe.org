@@ -1,5 +1,5 @@
-* complex
-A cross platform library for complex numbers, geometry and transforms
+* Complex Library
+A cross platform library for complex number, geometry and transform.
 
 ** Usage
 run cljs test using phantomjs
@@ -17,11 +17,11 @@ run clojure test from the repl
   (complex.test-runner/runner)
 #+END_SRC
 
-how to get lein test to use complex.test-runner?
+TODO: get lein test to use complex.test-runner?
 
-** implementation
-*** vector
-    in vector.cljs
+** Implementation
+*** Vector
+    in vector.cljc
     algebraic operations for vectors and matrices
 
     sum product
@@ -34,8 +34,8 @@ how to get lein test to use complex.test-runner?
     mmmult
     mat-inverse
 
-*** complex number
-    in complex.cljs
+*** Number
+    in number.cljc
 
     represented as
     a vector of two rational numbers
@@ -47,8 +47,9 @@ how to get lein test to use complex.test-runner?
     complex numbers can be added, multiplied and conjugated
     they have a length and an angle
 
-*** linear fractional transformation
-    in trasnforms.cljs
+*** Transfrom
+    linear fractional transformation
+    in trasnform.cljc
 
     represented as
     a vector of four complex numbers
@@ -68,8 +69,10 @@ how to get lein test to use complex.test-runner?
     conjugation by a conjugataing map as composition
     of three matrices
 
-*** image of a generalized circle
-    image of a circle from
+*** Geometry
+    image of a generalized circle
+    in geometry.cljc
+
     Grandma's recipe and project 3.7 in Indra's Pearls
 
     my idea:
@@ -92,3 +95,8 @@ how to get lein test to use complex.test-runner?
     todo:
     look at method from geometry of complex numbers
     where a generalized circle is repsesented as a Hermitian matrix
+** Technologies
+*** Reader Conditionals
+*** Test.check
+*** Prismatic Schema
+*** Core.match
