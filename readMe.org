@@ -8,10 +8,13 @@ run cljs test using phantomjs
 #+END_SRC
 
 run clojure test from the repl
+
+start the repl
 #+BEGIN_SRC shell
   lein repl
 #+END_SRC
 
+from in the repl
 #+BEGIN_SRC clojure
   (require 'complex.test-runner)
   (complex.test-runner/runner)
@@ -20,6 +23,61 @@ run clojure test from the repl
 TODO: get lein test to use complex.test-runner?
 
 ** Implementation
+*** Terms
+    complex number
+    addition, multiplication, one, zero, infinity
+    subtraction, multiplication
+    identity and inverse
+    length angle
+    conjugate
+    point line triangle circle
+    geometric transformations
+    translation, dilation
+    reflection - in a line or a circle
+    reciprocation
+
+    transforms using + - * / bar
+    circle preserving transformations
+    orientation preserving and reversing
+
+    transformable - able to be transformed
+    renderable - able to be rendered
+
+    protocols
+    Complex Transform Transformable Renderable
+
+*** Data
+    geometric types: point line circle triangle style
+    combined in a sequence, rendered to the canvas
+    or, eventually, to svg and webgl
+
+    - Number types
+      Complex number with algebraic operations of addition and multiplication
+    - Transform types
+      Mobius transformations
+      that can be composed and conjugated
+      and have inverses
+      preserving generalized circles
+    - Pencils of circles
+      and their orthogonal compliments
+      and their images
+      illustrating a particular transform, associated with that transfrom
+
+    able to be generated and validated
+    passed over the wire, using transit
+    saved in a database or a file as edn
+
+*** Transformation properties
+    entries a b c d
+    determinant
+    trace
+    inverse
+    fixed points
+
+*** Conjugation
+    of a mobius transformation
+    with translation, rotation, scaling
+
 *** Vector
     in vector.cljc
     algebraic operations for vectors and matrices
@@ -47,7 +105,7 @@ TODO: get lein test to use complex.test-runner?
     complex numbers can be added, multiplied and conjugated
     they have a length and an angle
 
-*** Transfrom
+*** Transform
     linear fractional transformation
     in trasnform.cljc
 
@@ -95,8 +153,100 @@ TODO: get lein test to use complex.test-runner?
     todo:
     look at method from geometry of complex numbers
     where a generalized circle is repsesented as a Hermitian matrix
+*** Extended line segment
+    extend a line segment between two points
+    to a whole line
+
+    given two points, p1 p2,
+    there are three parts:
+    the finite segment p1 to p2
+    the infinite segments
+    from infinity to p1 and
+    from p2 to infinity
+
+    the image of the three parts
+    can also be distinguished
+
+*** Generalized circle
+    given three points
+    the circumcircle of a triangle, if not collinear
+    or a line, a circle passing through infinity, if collinear
+
+*** Parameterized circle
+    z = (at + b)/(ct + d)
+    generalized equation
+    z*zbar + a*z + abar*zbar + b = 0
+    center = -abar
+    radius = a*abar - b
+
+    example: z = (1 + it)/(1 - it)
+    z1 z0 zinfinity
+
+    constructed and
+    calibrated
+
+    passing through three given points, p q and r
+    at t = 0, 1 and infinity, respectively
+    see Deaux
+
 ** Technologies
 *** Reader Conditionals
+*** Unit test in Clojure and ClojureScript
+    clojurescript testing
+    https://github.com/clojure/clojurescript/wiki/Testing
+
 *** Test.check
+    generative tests
+    https://github.com/clojure/test.check
+
 *** Prismatic Schema
+    for documentation and testing
+**** references
+     blog:
+     http://blog.getprismatic.com/schema-for-clojurescript-data-shape-declaration-and-validation/
+     docs:
+     http://prismatic.github.io/schema/
+
+     github:
+     https://github.com/Prismatic/schema
+
+**** contracts as types
+     https://github.com/jessitron/contracts-as-types-examples/blob/master/test/contractypes/report_example_test.clj
+     https://github.com/jessitron/contracts-as-types-examples
+     https://github.com/jessitron/schematron
+
+     Philly ETE 2015 #4
+     Contracts & Clojure: The Best-Yet Compromise of Types and Tests
+     Jessica Kerr
+     https://www.youtube.com/watch?v=GFQqyXoL0YQ
+     http://www.slideshare.net/jessitron/contracts-inclojurepete
+
+     david mcneil extending prismatic schema to higher order
+     http://david-mcneil.com/post/114783282473/extending-prismatic-schema-to-higher-order
+     https://gist.github.com/david-mcneil/a46b091c05a91adb8336
+
+**** code
+     #+BEGIN_SRC clojure
+       (def Point [s/Num])
+       (def Circle "a schema for circles" {:center Point :radius s/Num})
+
+       (s/check Circle {:center [0 0] :radius 1})
+       (s/validate Circle {:center [0 0] :radius 1})
+
+       (def circle [(s/one s/Keyword "tag") (s/one Circle "data")])
+       (s/check circle [:circle {:center [0 0] :radius 1}])
+     #+END_SRC
+
+     how to describe [:triangle p1 p2 p3]
+
+     for instance
+     a point is a single complex number
+     a line, two complex numbers
+     a triangle made up of three complex numbers,
+     if not collinear, has a circumcircle - a circumcenter and a radius
+     a transform can be applied to a point a line or a triangle
+     and consists of complex addition and multiplication
+     along with subtraction and division
+     with refelction and inversion using the complex conjugate
+
 *** Core.match
