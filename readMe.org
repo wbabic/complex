@@ -1,6 +1,5 @@
 * Complex Library
 A cross platform library for complex number, geometry and transform.
-
 ** Usage
 run cljs test using phantomjs
 #+BEGIN_SRC shell
@@ -188,6 +187,24 @@ TODO: get lein test to use complex.test-runner?
     passing through three given points, p q and r
     at t = 0, 1 and infinity, respectively
     see Deaux
+
+** Math references
+   Introduction to Geometry
+   Coxeter
+
+   Indra's Pearls
+   The vision of Felix Klein
+   Mumford, Series, Wright
+
+   Visual Complex Analysis
+   Tristan Needham
+
+   Geometry of Complex Numbers
+   Hans Schwerdttfeger
+
+   Introduction to the
+   Geometry of Complex Numbers
+   Roland Deaux
 
 ** Technologies
 *** Reader Conditionals
