@@ -9,17 +9,17 @@
       :cljs
       [cljs.core.match :refer-macros [match]])))
 
-(def unit-circle [:circle {:center [0 0] :radius 1}])
-(def real-axis [:line [0 0] [1 0]])
-(def imaginary-axis [:line [0 0] [0 1]])
-(def points [[:point [0 0]] [:point [1 0]] [:point [0 1]]])
-(def lines [real-axis imaginary-axis unit-circle])
-(def axis (interleave points lines))
+(defn point-on-line?
+  "check if given point p is on line l
+  where l is given by [a b c] with ax + by = c
+  being the equation for the line"
+  [p l]
+  (let [[x y] p
+        [a b c] l]
+    (< (* (- c (+ (* a x) (* b y))) (- c (+ (* a x) (* b y)))) 10e-10)))
 
-(declare point-on-line?)
 (declare line-coords)
-(declare intersection)
-(declare midpoint)
+
 (defn collinear?
   "return true if given complex numbers are collinear"
   [l]
@@ -29,6 +29,11 @@
           [p1 p2 p3] (mapv coords [c1 c2 c3])
           l (line-coords p1 p2)]
       (point-on-line? p3 l))))
+
+(defn midpoint
+  "midpoint -f two complex numbers"
+  [z w]
+  (mult (add z w) (/ 2)))
 
 (defn perp-bisector
   "return perp bisector of line segment z w
@@ -42,6 +47,15 @@
         f (comp t r t-inv)]
     [(f z) (f w)]))
 
+(defn intersection
+  "return the intersection of two lines"
+  [l1 l2]
+  (let [[a b c] (line-coords l1)
+        [d e f] (line-coords l2)
+        inv (v/mat-inverse [[a b] [d e]])
+        result (v/mvmult inv [c f])]
+    result))
+
 (defn circumcircle [c]
   (assert (not (collinear? c)))
   (let [[p1 p2 p3] c
@@ -49,49 +63,6 @@
         r (n/distance p3 (n/c c))
         cc [:circle {:center c :radius r}]]
     cc))
-
-(defn concentric-circles
-  "generate sequence of circles
-  with given center and radii in range"
-  [center start end step]
-  (let [c (fn [r] [:circle {:center center :radius r}])]
-    (for [r (range start end step)]
-      (c r))))
-
-(defn radial-lines
-  "return n radial lines through orogin"
-  [n]
-  (let [l (fn [c1] [:line [0 0] (coords c1)])]
-    (for [i (range n)]
-      (let [angle (/ (* i 180) n)
-            c1 (n/complex-polar angle)
-            c2 (n/complex-polar 4 (+ 180 angle))]
-        (l c1)))))
-
-(defn horizontal-lines
-  "horizontal lines"
-  [step-size]
-  (let [h-line (fn [i] [:line [-4 i] [4 i]])]
-    (for [i (range -4 4 step-size)]
-      (h-line i))))
-
-(defn vertical-lines
-  "horizontal lines"
-  [step-size]
-  (let [v-line (fn [j] [:line [j -4] [j 4]])]
-    (for [j (range -4 4 step-size)]
-      (v-line j))))
-
-(defn rectangular-point
-  [[x y]]
-  [[:line [x 0] [x y]]
-   [:line [0 y] [x y]]])
-
-(defn polar-point
-  [point]
-  (let [radius (v/len point)]
-    [[:line [0 0] point]
-     [:circle {:radius radius :center [0 0]}]]))
 
 ;; inversion in a general circle C
 ;; where C has center P and radius r
@@ -108,11 +79,6 @@
          S (fn [z] (add (mult r z) Q))
          S-inv (fn [w] (mult (recip r) (add w (minus Q))))]
      (comp S T S-inv))))
-
-(defn midpoint
-  "midpoint -f two complex numbers"
-  [z w]
-  (mult (add z w) (/ 2)))
 
 ;; parameterized circles
 ;; from deaux
@@ -239,14 +205,6 @@ need A and B to be real and B anc C complex conjugates"
      (line-coords-from-two-points p1 p2)
      (line-coords-from-two-points (coords p1)
                                   (coords p2)))))
-
-(comment
-  (defn param-line
-  "given two endpoints return function
-  of parameterized linem"
-  [A B]
-  (fn [t]
-    (v/sum A (v/scal-mul t (v/sum B (v/scal-mul -1 A)))))))
 
 (defn param-line
   "the parameterized line between two complex numbers"
@@ -460,24 +418,6 @@ need A and B to be real and B anc C complex conjugates"
   [[A B C D]]
   (let [b (n/len-sq B)]
     (- (* A D) b)))
-
-(defn point-on-line?
-  "check if given point p is on line l
-  where l is given by [a b c] with ax + by = c
-  being the equation for the line"
-  [p l]
-  (let [[x y] p
-        [a b c] l]
-    (< (* (- c (+ (* a x) (* b y))) (- c (+ (* a x) (* b y)))) 10e-10)))
-
-(defn intersection
-  "return the intersection of two lines"
-  [l1 l2]
-  (let [[a b c] (line-coords l1)
-        [d e f] (line-coords l2)
-        inv (v/mat-inverse [[a b] [d e]])
-        result (v/mvmult inv [c f])]
-    result))
 
 (comment
   (require 'complex.geometry :reload)

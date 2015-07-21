@@ -155,7 +155,7 @@
     d))
 
 (defn dot
-  "dot product for 2x2 complex vectors"
+  "complex dot product for 2x2 complex vectors"
   [[a1 b1] [a2 b2]]
   (add (mult a1 a2) (mult b1 b2)))
 
