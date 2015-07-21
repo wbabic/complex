@@ -91,7 +91,7 @@
 
 (def infinity
   (reify Complex
-    (coords [_] "infinity")
+    (coords [_] :infinity)
     (plus [z w]
       (if (= w infinity)
         undefined

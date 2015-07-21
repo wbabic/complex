@@ -55,14 +55,12 @@
 (defn translation [b]
   (mobius-trans. one b zero one))
 
-;; z -> 1/z
-(def T1 (mobius-trans. zero one one zero))
-
 ;; transformation which maps one and -one to zero and infinity respectively
+;; preserving the real-axis
 (def T2 (mobius-trans. one (minus one) one one))
 
 ;; Cayley Traansform
-(def T3 (mobius-trans. one (minus i) one i))
+(def Cayley (mobius-trans. one (minus i) one i))
 
 (defn rotation
   "return the mobius transformation
@@ -82,7 +80,7 @@
     :transform J}
    {:name "Cayley"
     :text "z -> (z-i)/(z+i)"
-    :transform T3}
+    :transform Cayley}
    {:name "T2"
     :text "z -> (z-1)/(z+1)"
     :transform T2}
