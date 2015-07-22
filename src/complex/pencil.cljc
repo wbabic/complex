@@ -138,6 +138,9 @@
 (def c-coords
   #(mapv n/coords %))
 
+(defn round [x]
+  (/ (int (* 100 x)) 100))
+
 (comment
   (require '[complex.pencil] :reload)
   (in-ns 'complex.pencil)
@@ -149,4 +152,14 @@
    [[0 2] [1 2] :infinity]
    [[0 3] [1 3] :infinity]
    [[0 4] [1 4] :infinity]]
+
+  (mapv c-coords
+        (generate-pencil [:up {:delta 1 :num-steps 4 :center [1 1]}]))
+  [[[1 2] [2 2] :infinity]
+   [[2 4] [3 4] :infinity]
+   [[3 6] [4 6] :infinity]
+   [[4 8] [5 8] :infinity]]
+
+  (mapv c-coords
+        (generate-pencil [:around {:delta 30 :num-steps 5}]))
   )
