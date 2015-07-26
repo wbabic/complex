@@ -120,8 +120,27 @@
    [:outward {:delta 2 :num-steps 4 :center [1 1]}]]
   )
 
-;; separte geometric transfromation from style transformation
-;; for easir development andt testing
+(def iterations
+  [[:up 1]
+   [:up -1]
+   [:right 1]
+   [:right -1]
+   [:out 2]
+   [:out (/ 2)]
+   [:around [:degrees 30]]
+   [:around [:degrees -30]]
+   [:around [:tau (/ 12)]]
+   [:around [:tau (/ 24)]]])
+
+(def pencils
+  [{:center [0 0]
+    :iter [:up 1]
+    :num-steps 5
+    :trails false
+    :time-between-steps 100}])
+
+;; separate geometric transfromation from style transformation
+;; for easir development and testing
 ;; intermingle style later
 (defn generate-pencil
   "using target and pencil-data, generate sequence of generalized circls
@@ -135,11 +154,13 @@
          [:around d] (around d)
          [:outward d] (outward d)))
 
-(def c-coords
-  #(mapv n/coords %))
-
 (defn round [x]
-  (/ (int (* 100 x)) 100))
+  (if (= x :infinity)
+    :infinity
+    (/ (int (* 100 x)) 100)))
+
+(def c-coords
+  #(mapv (comp round n/coords) %))
 
 (comment
   (require '[complex.pencil] :reload)
