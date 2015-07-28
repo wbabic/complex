@@ -154,13 +154,16 @@
          [:around d] (around d)
          [:outward d] (outward d)))
 
-(defn round [x]
-  (if (= x :infinity)
-    :infinity
-    (/ (int (* 100 x)) 100)))
+(defn round [c]
+  (mapv
+   (fn [v]
+     (if (= v :infinity) :infinity
+         (let [[x y] v]
+           [(format "%.2f" (double x)) (format "%.2f" (double y))])))
+   c))
 
 (def c-coords
-  #(mapv (comp round n/coords) %))
+  #(mapv n/coords %))
 
 (comment
   (require '[complex.pencil] :reload)
@@ -181,6 +184,11 @@
    [[3 6] [4 6] :infinity]
    [[4 8] [5 8] :infinity]]
 
-  (mapv c-coords
+  (mapv (comp round c-coords)
         (generate-pencil [:around {:delta 30 :num-steps 5}]))
+  [[["0.00" "0.00"] ["0.87" "0.50"] :infinity]
+   [["0.00" "0.00"] ["0.50" "0.87"] :infinity]
+   [["0.00" "0.00"] ["0.00" "1.00"] :infinity]
+   [["0.00" "0.00"] ["-0.50" "0.87"] :infinity]
+   [["0.00" "0.00"] ["-0.87" "0.50"] :infinity]]
   )

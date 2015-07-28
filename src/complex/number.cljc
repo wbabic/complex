@@ -4,6 +4,7 @@
 (def ^:const PI Math/PI)
 (def TAU (* 2 PI))
 (defn mod-tau [x] (mod x TAU))
+(defn mod-1 [x] (mod x 1))
 
 ;; Complex arithmetic protocol
 (defprotocol Complex

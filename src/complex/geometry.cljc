@@ -363,7 +363,7 @@ need A and B to be real and B anc C complex conjugates"
 (def cs-4
   {:p1 "red"
    :p2 "blue"
-   :p3 "green"
+   :p3 "white"
    :s1 "purple"})
 
 (def cs-5
