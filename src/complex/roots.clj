@@ -368,9 +368,9 @@
    [:omega :minus :conjugate]]
 
   ;; complex modifiers
-  [:conjugate :reciprocate :invert :negate]
+  [:conjugate :reciprocal :invert :negate]
   (eq :conjugate :reflect)
-  (eq :reciprocate '(:invert :conjugate))
+  (eq :reciprocal '(:invert :conjugate))
 
   (take-while #(not= one %) (iterate #(mult-tau % omega) omega))
 
