@@ -1,4 +1,5 @@
 (ns complex.number
+
   (:require [complex.vector :as v]))
 
 (def ^:const PI Math/PI)

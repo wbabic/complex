@@ -216,6 +216,8 @@
         m (reduce * ms)
         k (/ (- (* n n) (* b m m)))]
     (mult-number k conj)))
+(def alpha (list (/ 2) [:root 5 (/ 2)]))
+(def beta  (list  (/ 2) [:root 5 (/ -2)]))
 
 (comment
   (require '[complex.roots] :reload)
@@ -230,8 +232,6 @@
   (= (evaluate t)
      (+ (/ 2) (Math/sqrt 3) (* (Math/sqrt 5) (/ 2))))
 
-  (def alpha (list (/ 2) [:root 5 (/ 2)]))
-  (def beta  (list  (/ 2) [:root 5 (/ -2)]))
   (== 1 (evaluate (list alpha beta)))
   ;;=> true
 
@@ -313,7 +313,8 @@
      [:tau (/ 6)]} x))
 
 (comment
-  ;; equalities
+  ;; TODO equalities
+  ;; polar rect identities
   (eq one [:tau 0] [:rect 1 0] 1)
   (eq i [:tau (/ 4)] [:rect 0 1])
   (eq minus-one [:tau (/ 2)] [:rect -1 0] (minus one))
@@ -325,9 +326,55 @@
   (eq-omega [:rect (/ 2) [:root 3 (/ 2)]])
   )
 
+(def omega-map
+  {:rect [:rect (/ 2) [:root 3 (/ 2)]]
+   :tau [:tau (/ 6)]})
+
+(defn minus [v]
+  (cond (number? v) (* -1 v)
+        (vector? v)
+        (match v
+               [:root b & m] [:root b (reduce * -1 m)]
+               [:tau frac] [:tau (n/mod-1 (+ (/ 2) frac))]
+               [:rect x y] [:rect (minus x) (minus y)]
+               [:number n & roots] (into [:number (minus n)] (map minus roots)))))
+
+(defn conjugate [v]
+  (match v
+         [:rect x y] [:rect x (minus y)]
+         [:tau frac] [:tau (n/mod-1 (- 1 frac))]
+         [:number n root] [:number n (minus root)]))
+
+(comment
+  (minus (conjugate [:rect (/ 2) [:root 3 (/ 2)]]))
+  ;;=> [:rect -1/2 [:root 3 1/2]]
+  (minus (conjugate omega))
+  ;;=> [:tau 1/3]
+  (minus (minus omega))
+  ;;=> [:tau 1/6]
+  (conjugate (collect-terms alpha))
+  ;;=> [:number 1/2 [:root 5 -1/2]]
+  )
+
 (def minus-omega [:tau (/ 2 3)])
 (def omega-bar [:tau (/ 5 6)])
 (def minus-omega-bar [:tau (/ 1 3)])
+
+(defn eval-conj-minus [v]
+  (match v
+         [:minus exp] (minus (eval-test exp))
+         [:conjugate exp] (conjugate (eval-test exp))
+         :else v))
+
+(comment
+  (= (minus omega) minus-omega)
+  (= (conjugate omega) omega-bar)
+  (= (minus (conjugate omega)) minus-omega-bar)
+  ;;=> true
+
+  (eval-conj-minus [:conjugate [:minus omega]])
+  (eval-conj-minus [:minus (collect-terms alpha)])
+  )
 
 (def square [one i minus-one minus-i])
 (def square-set (set square))
@@ -375,4 +422,106 @@
   (take-while #(not= one %) (iterate #(mult-tau % omega) omega))
 
   (for [f hexagon g hexagon] (mult-tau f g))
+  )
+
+(def plimpton
+  [[119 169]
+   [3367 4825]
+   [4601 6649]
+   [12709 18541]
+   [65 97]
+   [319 481]
+   [2291 3541]
+   [799 1249]
+   [481 769]
+   [4961 8161]
+   [45 75]
+   [1679 2929]
+   [161 289]
+   [1771 3229]
+   [56 106]]
+  )
+
+(comment
+  (for [[b c] plimpton]
+    (let [b2 (* b b)
+          c2 (* c c)]
+      [c2 b2 (- c2 b2)]))
+
+  (do
+    (println "")
+    (for [[b c] plimpton]
+      (let [b2 (* b b)
+            c2 (* c c)
+            a2 (- c2 b2)
+            a (Math/sqrt a2)
+            d (double (/ c2 a2))]
+        [d a b c])))
+
+  (doseq [[b c] plimpton]
+    (let [b2 (* b b)
+          c2 (* c c)
+          a2 (- c2 b2)
+          a (Math/sqrt a2)]
+      (prn [a b c])
+      (assert (= c2 (+ a2 b2)))))
+  [28561 14161 14400]
+  [23280625 11336689 11943936]
+  [44209201 21169201 23040000]
+  [343768681 161518681 182250000]
+  [9409 4225 5184]
+  [231361 101761 129600]
+  [12538681 5248681 7290000]
+  [1560001 638401 921600]
+  [591361 231361 360000]
+  [66601921 24611521 41990400]
+  [5625 2025 3600]
+  [8579041 2819041 5760000]
+  [83521 25921 57600]
+  [10426441 3136441 7290000]
+  [11236 3136 8100]
+  )
+
+(defn minus [[x1 y1] [x2 y2]]
+  [(- x1 x2) (- y1 y2)])
+
+(defn length-squared [[x y]]
+  (+ (* x x) (* y y)))
+
+(defn distance-squared [p1 p2]
+  (let [[x1 y1] p1
+        [x2 y2] p2]
+    (length-squared (minus p2 p1))))
+
+(defn distance-from-origin-squared [z]
+  (match z
+         [:polar r _] (* r r)
+         [:tau _] 1
+         [:rect x y] (+ (* x x) (* y y))))
+
+(defn point-on-circle?
+  [z]
+  (= 1 (distance-from-origin-squared z)))
+
+(comment
+  (point-on-circle? omega)
+  ;;=> true
+
+  (let [p #(point-on-circle? %)
+        d (concat square hexagon)]
+    (reduce #(and %2 %1) (map p d)))
+
+  (length-squared (evaluate [:tau (/ 3)]))
+  ;;=> 0.9999999999999999
+  )
+
+
+(def p-circle
+  (fn [t]
+    (let [d (+ 1 (* t t))
+          n1 (- 1 (* t t))]
+      [(/ n1 d) (/ (* 2 t) d)])))
+
+(comment
+  (map (comp length-squared p-circle) (range 100))
   )

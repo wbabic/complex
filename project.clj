@@ -12,7 +12,7 @@
          :aliases {"cleantest" ["do" "clean," "cljsbuild" "test"]}}}
 
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "0.0-3308"]
+                 [org.clojure/clojurescript "1.7.48"]
                  [org.clojure/core.match "0.3.0-alpha4"]
                  [org.clojure/test.check "0.7.0"]
                  [prismatic/schema "0.4.3"]]
