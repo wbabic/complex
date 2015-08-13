@@ -19,6 +19,8 @@
 ;; base is the number to take the square root of and
 ;; number is a optional multiplier, defaulting to 1
 
+(def keywords [:number :root :tau :deg :radians :polar :rect])
+
 (defn factors [n]
   (reverse
    (sort
@@ -86,12 +88,13 @@
                               (rest nums))
                        [:number num1 & nroots]
                        (recur (+ num num1)
-                              (reduce (fn [result root]
-                                        (match root [:root b & m]
-                                               (update-in result [b]
-                                                          (fnil #(+ % (reduce * m)) 0))))
-                                      roots
-                                      nroots)
+                              (reduce
+                               (fn [result root]
+                                 (match root [:root b & m]
+                                        (update-in result [b]
+                                                   (fnil #(+ % (reduce * m)) 0))))
+                               roots
+                               nroots)
                               (rest nums)))))
             (into [:number num] (for [[k v] roots :when (not= 0 v)]
                                   [:root k v]))))))
@@ -106,14 +109,13 @@
                           [:root base & rest] (reduce * (Math/sqrt base) rest)
                           [:number n & rest]  (reduce + n (map evaluate rest))
                           [:tau f]
-                          (let [a (* f n/TAU)]
-                            [(Math/cos a) (Math/sin a)])
+                          (evaluate [:radians (* f n/TAU)])
+                          [:deg angle]
+                          (evaluate [:radians (n/deg->rad angle)])
+                          [:radians radians]
+                          [(Math/cos radians) (Math/sin radians)]
                           [:polar radius angle]
-                          (match angle
-                                 [:tau f]
-                                 (let [a  (* f n/TAU)]
-                                   [(* radius (Math/cos a))
-                                    (* radius (Math/sin a))]))
+                          (mapv #(* radius %) (evaluate angle))
                           [:rect x y] [x y])))
 
 (defn mult-number
@@ -216,6 +218,7 @@
         m (reduce * ms)
         k (/ (- (* n n) (* b m m)))]
     (mult-number k conj)))
+
 (def alpha (list (/ 2) [:root 5 (/ 2)]))
 (def beta  (list  (/ 2) [:root 5 (/ -2)]))
 
@@ -269,6 +272,10 @@
 
   (mult (/ 4) alpha)
   ;;=> (1/8 [:root 5 1/8])
+
+  (= (evaluate (mult (/ 2) alpha)) (first (evaluate [:tau (/ 10)])))
+  (= (evaluate [:polar 1 [:tau (/ 10)]]) (evaluate [:polar 1 [:deg 36]]))
+  ;;=> true
   )
 
 (comment
@@ -282,7 +289,6 @@
 
 (defn mult-tau
   ([] [:tau 0])
-  ([t1] t1)
   ([t1 t2]
    (let [[_ f1] t1
          [_ f2] t2]
@@ -360,13 +366,13 @@
 (def omega-bar [:tau (/ 5 6)])
 (def minus-omega-bar [:tau (/ 1 3)])
 
-(defn eval-conj-minus [v]
-  (match v
-         [:minus exp] (minus (eval-test exp))
-         [:conjugate exp] (conjugate (eval-test exp))
-         :else v))
-
 (comment
+  (defn eval-conj-minus [v]
+    (match v
+           [:minus exp] (minus (eval-test exp))
+           [:conjugate exp] (conjugate (eval-test exp))
+           :else v))
+
   (= (minus omega) minus-omega)
   (= (conjugate omega) omega-bar)
   (= (minus (conjugate omega)) minus-omega-bar)
@@ -415,9 +421,8 @@
    [:omega :minus :conjugate]]
 
   ;; complex modifiers
-  [:conjugate :reciprocal :invert :negate]
-  (eq :conjugate :reflect)
-  (eq :reciprocal '(:invert :conjugate))
+  [:conjugate :reciprocal :negative]
+  (eq :invert '(:reciprocal :conjugate))
 
   (take-while #(not= one %) (iterate #(mult-tau % omega) omega))
 
