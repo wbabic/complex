@@ -17,6 +17,7 @@
 (comment
   (require '[complex.root-test] :reload)
   (in-ns 'complex.root-test)
+  (run-tests)
   )
 
 (deftest is-zero
