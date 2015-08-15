@@ -27,14 +27,6 @@
     (assert (every? number? rest))
     true))
 
-(defn vector-number? [n]
-  (assert (vector? n))
-  (let [[tag rational & roots] n]
-    (assert (= :number tag))
-    (assert number? rational)
-    (map root-number? roots)
-    true))
-
 (def keywords [:number :root :tau :deg :radians :polar :rect])
 
 (defn factors [n]
@@ -237,9 +229,11 @@
   "conjugate for single root number"
   [num]
   (assert-single-root-num num)
-  (let [[_ n root] num
-        [_ base & mult] root]
-    [:number n [:root base (reduce * -1 mult)]]))
+  (match num
+         [:number n root]
+         (match root
+                [:root base & mult]
+                [:number n [:root base (reduce * -1 mult)]])))
 
 (defn invert-num
   "invert a single root num: 1/num"
@@ -258,12 +252,8 @@
 (comment
   (require '[complex.roots] :reload)
   (in-ns 'complex.roots)
-  (evaluate [:root 2])
-  (evaluate [:root 3 (/ 2)])
-  (def t (list (/ 2) [:root 3] [:root 5 (/ 2)]))
 
-  ;; a rational plus it roots
-  ;; a root and its multiplicity
+  (def t (list (/ 2) [:root 3] [:root 5 (/ 2)]))
 
   (= (evaluate t)
      (+ (/ 2) (Math/sqrt 3) (* (Math/sqrt 5) (/ 2))))
@@ -276,14 +266,6 @@
   (mult-number (/ 3) [:root 2 1/3])
   (mult-number (/ 3) (list (/ 2)))
   (mult-number (/ 3) (list (/ 2) [:root 2] [:root 3 (/ 2)]))
-
-  (= (collect-roots alpha)
-     (mult-number (/ 2) (list 1 [:root 5])))
-  ;;=> true
-
-  (= (collect-terms alpha)
-     (mult-number (/ 2) (list 1 [:root 5])))
-  ;;=> true
 
   (< (Math/abs (- (evaluate (mult alpha beta))
                   (* (evaluate alpha) (evaluate beta))))
@@ -309,15 +291,6 @@
   (= (evaluate (mult (/ 2) alpha)) (first (evaluate [:tau (/ 10)])))
   (= (evaluate [:polar 1 [:tau (/ 10)]]) (evaluate [:polar 1 [:deg 36]]))
   ;;=> true
-  )
-
-(comment
-  (let [x [1 2 3]]
-    (match [x]
-           [([1] :seq)] :a0
-           [([1 & r] :seq)] [:a1 r]
-           :else nil))
-  ;;=> [:a1 (2 3)]
   )
 
 (defn mult-tau
@@ -372,24 +345,16 @@
 (def one       [:tau 0])
 (def i         [:tau (/ 4)])
 (def omega     [:tau (/ 6)])
+(def iota      [:tau (/ 10)])
 
 (defn eq-omega [x]
   (#{[:rect (/ 2) [:root 3 (/ 2)]]
      [:tau (/ 6)]} x))
 
 (comment
-  ;; TODO equalities
-  ;; polar rect identities
-  (eq i [:tau (/ 4)] [:rect 0 1])
-  (eq minus-one [:tau (/ 2)] [:rect -1 0] (minus one))
-  (eq minus-i [:tau (/ 3 4)] [:rect 0 -1] (minus i))
   (eq-omega [:tau (/ 6)])
   (eq-omega [:rect (/ 2) [:root 3 (/ 2)]])
   )
-
-(def omega-map
-  {:rect [:rect (/ 2) [:root 3 (/ 2)]]
-   :tau [:tau (/ 6)]})
 
 (defn minus [v]
   (cond (number? v) (* -1 v)
@@ -401,32 +366,22 @@
                [:number n & roots] (into [:number (minus n)] (map minus roots)))))
 
 (defn conjugate [v]
-  (match v
-         [:rect x y] [:rect x (minus y)]
-         [:tau frac] [:tau (n/mod-1 (- 1 frac))]
-         [:number n root] [:number n (minus root)]))
-
-(comment
-  (minus (conjugate [:rect (/ 2) [:root 3 (/ 2)]]))
-  ;;=> [:rect -1/2 [:root 3 1/2]]
-  (minus (conjugate omega))
-  ;;=> [:tau 1/3]
-  (minus (minus omega))
-  ;;=> [:tau 1/6]
-  (conjugate (collect-terms alpha))
-  ;;=> [:number 1/2 [:root 5 -1/2]]
-  )
-
-(def minus-omega [:tau (/ 2 3)])
-(def omega-bar [:tau (/ 5 6)])
-(def minus-omega-bar [:tau (/ 1 3)])
+  (cond
+    (number? v) v
+    (vector? v)
+    (match v
+           [:rect x y] [:rect x (minus y)]
+           [:tau frac] [:tau (n/mod-1 (- 1 frac))]
+           [:root b & m] (minus v)
+           [:number n root] [:number n (minus root)])
+    (seq? v) (conjugate (collect-terms v))))
 
 (def square (take 4 (iterate #(mult-tau i %) one)))
 (def square-set (set square))
 (def hexagon (take 6 (iterate #(mult-tau omega %) one)))
 (def hex-set (set hexagon))
-(def triangle [minus-omega-bar minus-omega one])
-
+(def triangle (take 3 (iterate #(mult-tau (mult-tau omega omega) %) one)))
+(def triangle-set (set triangle))
 (defn omega-nth
   "the nth power of omega looked up in a vector"
   [n]
@@ -537,7 +492,6 @@
   (length-squared (evaluate [:tau (/ 3)]))
   ;;=> 0.9999999999999999
   )
-
 
 (def p-circle
   (fn [t]

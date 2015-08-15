@@ -64,8 +64,19 @@
 (defspec additive-inverse additive-inverse-prop)
 (defspec multiplicative-inverse multiplicative-inverse-prop)
 
+(deftest alpha-conjugate
+  (testing "conjugate alpha"
+    (is (= (r/collect-terms r/beta) (r/conjugate r/alpha)))))
+
+(def conjugate-prop
+  (prop/for-all [r gen-root]
+                (= (r/evaluate r) (r/evaluate (r/conjugate (r/conjugate r))))))
+
+(defspec conjugate-involution conjugate-prop)
+
 (comment
   (tc/quick-check 1000 root-property)
   (tc/quick-check 1000 additive-inverse-prop)
   (tc/quick-check 1000 multiplicative-inverse-prop)
+  (tc/quick-check 1000 conjugate-prop)
   )
