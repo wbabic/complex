@@ -1,5 +1,5 @@
 (ns complex.number
-
+  "Extended Complex Number"
   (:require [complex.vector :as v]))
 
 (def ^:const PI Math/PI)
