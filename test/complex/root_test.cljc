@@ -58,7 +58,7 @@
 
 (def multiplicative-inverse-prop
   (prop/for-all [r gen-non-zero-root]
-                (r/one? (r/mult-root r (r/invert-root r)))))
+                (r/one? (r/mult-root r (r/reciprocal r)))))
 
 (defspec is-root root-property)
 (defspec additive-inverse additive-inverse-prop)

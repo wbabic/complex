@@ -15,7 +15,8 @@
           (run-tests
            'complex.number-test
            'complex.geometry-test
-           'complex.transform-test))
+           'complex.transform-test
+           'complex.root-test))
        0
        1)
      :clj
@@ -23,6 +24,7 @@
           (run-tests
            'complex.number-test
            'complex.geometry-test
-           'complex.transform-test))
+           'complex.transform-test
+           'complex.root-test))
        "Success"
        "Failure")))

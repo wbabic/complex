@@ -1,7 +1,10 @@
 (ns complex.roots
   "construtable numbers with exact precision"
-  (:require [clojure.core.match :refer [match]]
-            [complex.number :as n]))
+  (:require [complex.number :as n]
+            #?(:clj
+               [clojure.core.match :refer [match]]
+               :cljs
+               [cljs.core.match :refer-macros [match]])))
 
 ;; a number is
 ;; a number
@@ -194,7 +197,7 @@
                    [:number 1 r n]))
           (seq? n) (add-root r (collect-terms n)))))
 
-(defn invert-root
+(defn reciprocal
   "1 / root"
   [root]
   (let [[:root b & m] root]
@@ -337,7 +340,7 @@
            [:polar r a] (and (zero? (- 1 r))
                              (one? a))
            [:number rational & roots]
-           (and (one rational)
+           (and (one? rational)
                 (every? my-zero? roots))
            [:rect x y]
            (and (zero? (- 1 x))(zero? y)))))
@@ -382,6 +385,9 @@
 (def hex-set (set hexagon))
 (def triangle (take 3 (iterate #(mult-tau (mult-tau omega omega) %) one)))
 (def triangle-set (set triangle))
+(def pentagon (take 5 (iterate #(mult-tau (mult-tau iota iota) %) one)))
+(def decagon (take 10 (iterate #(mult-tau iota %) one)))
+
 (defn omega-nth
   "the nth power of omega looked up in a vector"
   [n]
