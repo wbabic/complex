@@ -22,6 +22,36 @@
 ;; base is the number to take the square root of and
 ;; number is a optional multiplier, defaulting to 1
 
+(def keywords [[:rect :polar]
+               [:number :root]
+               [:tau :degree :radian]
+               [:zero :one :infinity]
+               ;; for later:
+               [:degree :minute :second]
+               [:year :month :day :hour :minute :second]
+               [:add :multiply :negative :reciprocal :conjugal :inversion]
+               [:translate :dilate :negate :reciprocate :conjugate :invert]])
+
+(defn evaluate
+  "evaluate number tree to a Double"
+  [tree]
+  (cond
+    (number? tree) tree
+    (seq? tree) (reduce + (map evaluate tree))
+    (vector? tree) (match tree
+                          [:root base & rest] (reduce * (Math/sqrt base) rest)
+                          [:number n & rest]  (reduce + n (map evaluate rest))
+                          [:tau f]
+                          (evaluate [:radians (* f n/TAU)])
+                          [:deg angle]
+                          (evaluate [:radians (n/deg->rad angle)])
+                          [:radians radians]
+                          [(Math/cos radians) (Math/sin radians)]
+                          [:polar radius angle]
+                          (mapv #(* radius %) (evaluate angle))
+                          [:rect x y] [x y]
+                          [:reciprocal n] (/ 1 (evaluate n)))))
+
 (defn root-number? [r]
   (assert (vector? r))
   (let [[tag base & rest] r]
@@ -30,7 +60,35 @@
     (assert (every? number? rest))
     true))
 
-(def keywords [:number :root :tau :deg :radians :polar :rect])
+(defn my-zero? [n]
+  (cond
+    (number? n) (zero? n)
+    (vector? n)
+    (match n
+           [:root b & mult] (or (zero? b) (zero? (reduce * mult)))
+           [:rect x y] (and (zero? x) (zero? y))
+           [:polar r a] (zero? r)
+           [:number rational & roots]
+           (reduce #(and %1 %2)
+                   (zero? rational)
+                   (map my-zero? roots)))))
+
+(defn one? [n]
+  (cond
+    (number? n) (zero? (- 1 n))
+    (vector? n)
+    (match n
+           [:tau a] (zero? a)
+           [:root b & m] (and (zero? (- 1 b))
+                              (zero? (- 1 (reduce * m))))
+           [:polar r a] (and (zero? (- 1 r))
+                             (one? a))
+           [:number rational & roots]
+           (or (and (one? rational)
+                    (every? my-zero? roots))
+               (== 1 (evaluate n)))
+           [:rect x y]
+           (and (zero? (- 1 x))(zero? y)))))
 
 (defn factors [n]
   (reverse
@@ -109,25 +167,6 @@
             (into [:number num] (for [[k v] roots :when (not= 0 v)]
                                   [:root k v]))))))
 
-(defn evaluate
-  "evaluate number tree to a Double"
-  [tree]
-  (cond
-    (number? tree) tree
-    (seq? tree) (reduce + (map evaluate tree))
-    (vector? tree) (match tree
-                          [:root base & rest] (reduce * (Math/sqrt base) rest)
-                          [:number n & rest]  (reduce + n (map evaluate rest))
-                          [:tau f]
-                          (evaluate [:radians (* f n/TAU)])
-                          [:deg angle]
-                          (evaluate [:radians (n/deg->rad angle)])
-                          [:radians radians]
-                          [(Math/cos radians) (Math/sin radians)]
-                          [:polar radius angle]
-                          (mapv #(* radius %) (evaluate angle))
-                          [:rect x y] [x y])))
-
 (defn mult-number
   "mult num2 by a regular number n"
   [n num2]
@@ -197,60 +236,56 @@
                    [:number 1 r n]))
           (seq? n) (add-root r (collect-terms n)))))
 
-(defn reciprocal
-  "1 / root"
-  [root]
-  (let [[:root b & m] root]
-    [:root b (* (/ (reduce * m)) (/ b))]))
+(defn add
+  "add two numbers"
+  [num1 num2]
+  (collect-terms (list num1 num2)))
 
-(defn assert-root [root]
-  (assert (vector? root))
-  (let [[k b & m] root]
-    (assert (= k :root))
-    (assert (number? b))
-    ))
+(defn negative [v]
+  (cond (number? v) (* -1 v)
+        (vector? v)
+        (match v
+               [:root b & m] [:root b (reduce * -1 m)]
+               [:tau frac] [:tau (n/mod-1 (+ (/ 2) frac))]
+               [:rect x y] [:rect (negative x) (negative y)]
+               [:number n & roots] (into [:number (negative n)] (map negative roots)))
+        (seq? v) (negative (collect-terms v))))
 
-(defn assert-single-root-num [num]
-  (assert (vector? num))
-  (let [[k n & roots] num]
-    (assert (= k :number))
-    (assert (number? n))
-    (assert (= 1 (count roots)))
-    (doseq [r roots]
-      (assert-root r))))
+(defn conjugate [v]
+  (cond
+    (number? v) v
+    (vector? v)
+    (match v
+           [:rect x y] [:rect x (negative y)]
+           [:tau frac] [:tau (n/mod-1 (- 1 frac))]
+           [:root b & m] (negative v)
+           [:number n root] [:number n (negative root)])
+    (seq? v) (conjugate (collect-terms v))))
 
-(defn assert-num [num]
-  (assert (vector? num))
-  (let [[k n & roots] num]
-    (assert (= k :number))
-    (assert (number? n))
-    (doseq [r roots]
-      (assert-root r))))
+(defn reciprocal [num]
+  (cond
+    (number? num) (/ num)
+    (seq? num) (reciprocal (collect-terms num))
+    (vector? num)
+    (match num
+           [:number n & roots]
+           (if (= 1 (count roots))
+             (let [conj (conjugate num)
+                   root (first roots)
+                   [_ b & ms] root
+                   m (reduce * ms)
+                   k (/ (- (* n n) (* b m m)))]
+               (mult-number k conj))
+             [:reciprocal num])
 
-;; for single root numbers
-(defn conjugate-number
-  "conjugate for single root number"
-  [num]
-  (assert-single-root-num num)
-  (match num
-         [:number n root]
-         (match root
-                [:root base & mult]
-                [:number n [:root base (reduce * -1 mult)]])))
-
-(defn invert-num
-  "invert a single root num: 1/num"
-  [num]
-  (assert-single-root-num num)
-  (let [conj (conjugate-number num)
-        [_ n root] num
-        [_ b & ms] root
-        m (reduce * ms)
-        k (/ (- (* n n) (* b m m)))]
-    (mult-number k conj)))
+           [:root base & mult]
+           (reciprocal (collect-terms num)))))
 
 (def alpha (list (/ 2) [:root 5 (/ 2)]))
 (def beta  (list  (/ 2) [:root 5 (/ -2)]))
+
+(def Phi alpha)
+(def phi (negative beta))
 
 (comment
   (require '[complex.roots] :reload)
@@ -289,124 +324,12 @@
   ;;=> -1N
 
   (mult (/ 4) alpha)
-  ;;=> (1/8 [:root 5 1/8])
+  ;;=> [:number 1/8 [:root 5 1/8]]
 
-  (= (evaluate (mult (/ 2) alpha)) (first (evaluate [:tau (/ 10)])))
-  (= (evaluate [:polar 1 [:tau (/ 10)]]) (evaluate [:polar 1 [:deg 36]]))
+
   ;;=> true
   )
 
-(defn mult-tau
-  ([] [:tau 0])
-  ([t1 t2]
-   (let [[_ f1] t1
-         [_ f2] t2]
-     [:tau (n/mod-1 (+ f1 f2))]))
-  ([t1 t2 & rest]
-   (reduce
-    (fn [result item]
-      (mult-tau result item))
-    (mult-tau t1 t2)
-    rest)))
-
-(defn pow-tau
-  "tau to the n power"
-  [tau n]
-  (cond (= n 0) [:tau 0]
-        (= n 1) tau
-        :else (reduce (fn [result item] (mult-tau result tau)) [:tau 0] (range n))))
-
-(defn my-zero? [n]
-  (cond
-    (number? n) (zero? n)
-    (vector? n)
-    (match n
-           [:root b & mult] (or (zero? b) (zero? (reduce * mult)))
-           [:rect x y] (and (zero? x) (zero? y))
-           [:polar r a] (zero? r)
-           [:number rational & roots]
-           (reduce #(and %1 %2)
-                   (zero? rational)
-                   (map my-zero? roots)))))
-
-(defn one? [n]
-  (cond
-    (number? n) (zero? (- 1 n))
-    (vector? n)
-    (match n
-           [:tau a] (zero? a)
-           [:root b & m] (and (zero? (- 1 b))
-                              (zero? (- 1 (reduce * m))))
-           [:polar r a] (and (zero? (- 1 r))
-                             (one? a))
-           [:number rational & roots]
-           (and (one? rational)
-                (every? my-zero? roots))
-           [:rect x y]
-           (and (zero? (- 1 x))(zero? y)))))
-
-(def one       [:tau 0])
-(def i         [:tau (/ 4)])
-(def omega     [:tau (/ 6)])
-(def iota      [:tau (/ 10)])
-
-(defn eq-omega [x]
-  (#{[:rect (/ 2) [:root 3 (/ 2)]]
-     [:tau (/ 6)]} x))
-
-(comment
-  (eq-omega [:tau (/ 6)])
-  (eq-omega [:rect (/ 2) [:root 3 (/ 2)]])
-  )
-
-(defn minus [v]
-  (cond (number? v) (* -1 v)
-        (vector? v)
-        (match v
-               [:root b & m] [:root b (reduce * -1 m)]
-               [:tau frac] [:tau (n/mod-1 (+ (/ 2) frac))]
-               [:rect x y] [:rect (minus x) (minus y)]
-               [:number n & roots] (into [:number (minus n)] (map minus roots)))))
-
-(defn conjugate [v]
-  (cond
-    (number? v) v
-    (vector? v)
-    (match v
-           [:rect x y] [:rect x (minus y)]
-           [:tau frac] [:tau (n/mod-1 (- 1 frac))]
-           [:root b & m] (minus v)
-           [:number n root] [:number n (minus root)])
-    (seq? v) (conjugate (collect-terms v))))
-
-(def square (take 4 (iterate #(mult-tau i %) one)))
-(def square-set (set square))
-(def hexagon (take 6 (iterate #(mult-tau omega %) one)))
-(def hex-set (set hexagon))
-(def triangle (take 3 (iterate #(mult-tau (mult-tau omega omega) %) one)))
-(def triangle-set (set triangle))
-(def pentagon (take 5 (iterate #(mult-tau (mult-tau iota iota) %) one)))
-(def decagon (take 10 (iterate #(mult-tau iota %) one)))
-
-(defn omega-nth
-  "the nth power of omega looked up in a vector"
-  [n]
-  (let [k (mod n 6)]
-    (nth hexagon k)))
-
-(comment
-  (= omega
-     [:tau (/ 6)]
-     [:rect (/ 2) [:root 3 (/ 2)]])
-
-  (pow-tau omega 6)
-  ;;=> [:tau 0]
-  (= (pow-tau omega 6) one)
-
-  (take-while #(not= one %) (iterate #(mult-tau % omega) omega))
-
-  (for [f hexagon g hexagon] (mult-tau f g))
-  )
 
 (def plimpton
   [[119 169]
@@ -466,7 +389,7 @@
   [11236 3136 8100]
   )
 
-(defn v-minus [[x1 y1] [x2 y2]]
+(defn minus [[x1 y1] [x2 y2]]
   [(- x1 x2) (- y1 y2)])
 
 (defn length-squared [[x y]]
@@ -475,7 +398,7 @@
 (defn distance-squared [p1 p2]
   (let [[x1 y1] p1
         [x2 y2] p2]
-    (length-squared (v-minus p2 p1))))
+    (length-squared (minus p2 p1))))
 
 (defn distance-from-origin-squared [z]
   (match z

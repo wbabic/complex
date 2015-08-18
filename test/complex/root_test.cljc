@@ -39,7 +39,6 @@
     (is (r/one? (r/collect-terms [:number 1 [:root 2] [:root 2 -1]])))
     (is (r/one? [:rect 1 0]))))
 
-;; lets generate some random roots
 (def gen-root-base (gen/tuple (gen/return :root) gen/pos-int))
 
 (def gen-root-base-mult (gen/tuple (gen/return :root) gen/pos-int gen/ratio))
@@ -55,7 +54,7 @@
 
 (def additive-inverse-prop
   (prop/for-all [r gen-root]
-                (r/my-zero? (r/add-root r (r/minus r)))))
+                (r/my-zero? (r/add-root r (r/negative r)))))
 
 (def multiplicative-inverse-prop
   (prop/for-all [r gen-non-zero-root]
@@ -81,3 +80,9 @@
   (tc/quick-check 1000 multiplicative-inverse-prop)
   (tc/quick-check 1000 conjugate-prop)
   )
+
+(deftest phi-test
+  (testing "basic phi relationships"
+    (is (= (r/reciprocal r/Phi) r/phi))
+    (is (= r/phi (r/reciprocal r/Phi)))
+    (is (= (r/add 1 r/phi) (r/collect-terms r/Phi)))))
