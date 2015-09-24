@@ -5,7 +5,8 @@
                [cljs.test :refer-macros [run-tests]])
             [complex.number-test]
             [complex.geometry-test]
-            [complex.transform-test]))
+            [complex.transform-test]
+            [complex.root-test]))
 
 #?(:cljs [(enable-console-print!)])
 

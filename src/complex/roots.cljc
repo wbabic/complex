@@ -325,9 +325,6 @@
 
   (mult (/ 4) alpha)
   ;;=> [:number 1/8 [:root 5 1/8]]
-
-
-  ;;=> true
   )
 
 

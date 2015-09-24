@@ -9,8 +9,6 @@
                :cljs
                [cljs.core.match :refer-macros [match]])))
 
-;; geometric data
-
 ;; 3 genearlized circles
 (def x-axis      [zero one infinity])
 (def y-axis      [zero i infinity])

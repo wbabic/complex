@@ -13,11 +13,14 @@ start the repl
   lein repl
 #+END_SRC
 
-from in the repl
+run tests from with-in a clojure repl
 #+BEGIN_SRC clojure
   (require 'complex.test-runner)
   (complex.test-runner/runner)
 #+END_SRC
+
+run test from a node repl
+- see dev/node-repl.clj
 
 TODO: get lein test to use complex.test-runner?
 
