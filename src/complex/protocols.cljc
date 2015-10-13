@@ -12,7 +12,6 @@
 
   (defprocol AlmostEquals
     (almost-equals [_ other]))
-
   )
 
 ;; Complex arithmetic protocol

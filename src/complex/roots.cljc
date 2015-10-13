@@ -10,12 +10,12 @@
 ;; a number
 ;; or
 ;; a vector
-;; [:numter num [:root base1 multiplier1] [:root base2 mult2] [:root base3]]
+;; [:number num [:root base1 multiplier1] [:root base2 mult2] [:root base3]]
 ;; a :number tag followed by the a number and zero or more roots
 ;; or
 ;; a seq of
 ;; a list of numbers and roots
-;; (list num1 [:root base1] [:root base2 multiplier2] num2)
+;; (list num-1 [:root base-1] [:root base-2 multiplier-2] num-2)
 ;; collect-terms will transform such sequences into a tagged :number vector
 
 ;; roots are :root tagged vectors [:root base & number] where

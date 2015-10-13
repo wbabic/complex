@@ -1,10 +1,8 @@
 (ns complex.transform
+  "the algebra of linear fractional transformations"
   (:require [complex.number :as n
              :refer [div add sub minus recip infinity zero one i arg length]]
             [complex.vector :as v]))
-
-;; the algebra of
-;; linear fractional transformations
 
 (defprotocol Mobius
   "protocol for mobius transformations"

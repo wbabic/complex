@@ -4,6 +4,7 @@ A cross platform library for complex number, geometry and transform.
 run cljs test using phantomjs
 #+BEGIN_SRC shell
   lein cleantest
+  lein nodetest
 #+END_SRC
 
 run clojure test from the repl
@@ -23,6 +24,8 @@ run test from a node repl
 - see dev/node-repl.clj
 
 TODO: get lein test to use complex.test-runner?
+
+node resources/run.js
 
 ** Implementation
 *** Terms

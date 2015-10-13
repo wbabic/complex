@@ -15,6 +15,7 @@
         [cljs.test.check.cljs-test :refer-macros [defspec]]])))
 
 (comment
+  ;; to interactively run tests
   (require '[complex.root-test] :reload)
   (in-ns 'complex.root-test)
   (run-tests)
@@ -39,6 +40,7 @@
     (is (r/one? (r/collect-terms [:number 1 [:root 2] [:root 2 -1]])))
     (is (r/one? [:rect 1 0]))))
 
+;; generators
 (def gen-root-base (gen/tuple (gen/return :root) gen/pos-int))
 
 (def gen-root-base-mult (gen/tuple (gen/return :root) gen/pos-int gen/ratio))
@@ -48,6 +50,7 @@
 (def gen-non-zero-root
   (gen/such-that #(not (r/my-zero? %)) gen-root))
 
+;; properties
 (def root-property
   (prop/for-all [r gen-root]
                 (r/root-number? r)))
@@ -60,6 +63,7 @@
   (prop/for-all [r gen-non-zero-root]
                 (r/one? (r/mult-root r (r/reciprocal r)))))
 
+;; tests
 (defspec is-root root-property)
 (defspec additive-inverse additive-inverse-prop)
 (defspec multiplicative-inverse multiplicative-inverse-prop)
