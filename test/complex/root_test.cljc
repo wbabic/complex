@@ -1,18 +1,15 @@
 (ns complex.root-test
   (:require
    [complex.roots :as r]
+   [clojure.test.check :as tc]
+   [clojure.test.check.generators :as gen]
+   [clojure.test.check.properties :as prop]
    #?@(:clj
        [[clojure.test :refer :all]
-        [clojure.test.check :as tc]
-        [clojure.test.check.generators :as gen]
-        [clojure.test.check.properties :as prop]
         [clojure.test.check.clojure-test :refer [defspec]]]
        :cljs
        [[cljs.test :as text :refer-macros [is deftest are testing run-tests]]
-        [cljs.test.check :as tc]
-        [cljs.test.check.properties :as prop :include-macros true]
-        [cljs.test.check.generators :as gen]
-        [cljs.test.check.cljs-test :refer-macros [defspec]]])))
+        [clojure.test.check.clojure-test :refer-macros [defspec]]])))
 
 (comment
   ;; to interactively run tests

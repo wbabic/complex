@@ -116,10 +116,7 @@
   "add complex numbers"
   ([] zero)
   ([z] z)
-  ([z w]
-   (if (and (= z infinity) (= w infinity))
-     undefined
-     (plus z w)))
+  ([z w] (plus z w))
   ([z w & rest] (reduce plus (plus z w) rest)))
 
 (defn sub [z w]

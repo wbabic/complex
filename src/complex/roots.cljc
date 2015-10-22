@@ -32,7 +32,7 @@
                [:add :multiply :negative :reciprocal :conjugal :inversion]
                [:translate :dilate :negate :reciprocate :conjugate :invert]])
 
-(defn evaluate
+ (defn evaluate
   "evaluate number tree to a Double"
   [tree]
   (cond

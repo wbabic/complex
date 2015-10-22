@@ -4,18 +4,15 @@
     :refer [mult div add sub minus recip infinity zero one i coords arg length]]
    [complex.number-test :as nt]
    [complex.geometry :as g]
+   [clojure.test.check :as tc]
+   [clojure.test.check.generators :as gen]
+   [clojure.test.check.properties :as prop]
    #?@(:clj
        [[clojure.test :refer :all]
-        [clojure.test.check :as tc]
-        [clojure.test.check.generators :as gen]
-        [clojure.test.check.properties :as prop]
         [clojure.test.check.clojure-test :refer [defspec]]]
        :cljs
        [[cljs.test :as text :refer-macros [is deftest are testing run-tests]]
-        [cljs.test.check :as tc]
-        [cljs.test.check.properties :as prop :include-macros true]
-        [cljs.test.check.generators :as gen]
-        [cljs.test.check.cljs-test :refer-macros [defspec]]])))
+        [clojure.test.check.clojure-test :include-macros true]])))
 
 (deftest inversion-test
   (testing "inversion in a circle"

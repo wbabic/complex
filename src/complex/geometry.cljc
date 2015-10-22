@@ -21,7 +21,8 @@
 (declare line-coords)
 
 (defn collinear?
-  "return true if given complex numbers are collinear"
+  "return true if given complex numbers are collinear
+  any two points and infinity are collinear"
   [l]
   (if (some #(= infinity %) l)
     true

@@ -1,31 +1,42 @@
 * Complex Library
-A cross platform library for complex number, geometry and transform.
+A cross platform library for exact extended complex numbers,
+ geometry and transform.
 ** Usage
-run cljs test using phantomjs
-#+BEGIN_SRC shell
-  lein cleantest
-  lein nodetest
-#+END_SRC
-
-run clojure test from the repl
-
-start the repl
+*** clojure repl
 #+BEGIN_SRC shell
   lein repl
 #+END_SRC
 
-run tests from with-in a clojure repl
+using a test runner in test/complex/test-runner.cljc
+which can work from either clojure or clojurescript
 #+BEGIN_SRC clojure
   (require 'complex.test-runner)
   (complex.test-runner/runner)
 #+END_SRC
+or
+#+BEGIN_SRC shell
+  lein test
+#+END_SRC
 
-run test from a node repl
-- see dev/node-repl.clj
+*** nodejs repl
+- see dev/node-repl.clj to start a node repl from a clojure repl
 
-TODO: get lein test to use complex.test-runner?
+run cljs test using nodejs
+#+BEGIN_SRC shell
+  lein nodetest
+#+END_SRC
 
-node resources/run.js
+an alias, which does a build:
+#+BEGIN_SRC shell
+  lein cljsbuild once node-dev
+#+END_SRC
+
+and runs the built target from nodejs:
+#+BEGIN_SRC shell
+  node resources/run.js
+#+END_SRC
+which calls the -main function in
+test/complex/node_test_runner.cljs
 
 ** Implementation
 *** Terms

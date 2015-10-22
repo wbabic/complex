@@ -6,24 +6,18 @@
 
   :profiles
   {:dev {:plugins [[lein-cljsbuild "1.1.0"]]
-         :aliases {"cleantest" ["do" "clean," "cljsbuild" "test"]
-                   "nodetest" ["do" "clean," "cljsbuild" "once" "node-dev"]}}}
+         :aliases {"nodetest" ["do" "clean," "cljsbuild" "once" "node-dev"]}}}
 
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "1.7.48"]
+                 [org.clojure/clojurescript "1.7.145"]
                  [org.clojure/core.match "0.3.0-alpha4"]
-                 [org.clojure/test.check "0.7.0"]
-                 [prismatic/schema "0.4.3"]
+                 [org.clojure/test.check "0.8.2"]
+                 [prismatic/schema "1.0.1"]
                  [com.gfredericks/exact "0.1.8"]]
 
   :cljsbuild
   {:builds
-   [{:id "test"
-     :source-paths ["src" "test"]
-     :compiler {:output-to "target/testable.js"
-                :optimizations :whitespace
-                :pretty-print true}}
-    {:id "node-dev"
+   [{:id "node-dev"
      :source-paths ["src" "test"]
      :notify-command ["node" "resources/run.js"]
      :compiler {:optimizations :none
@@ -32,4 +26,4 @@
                 :output-to "target/cljs/node_dev/tests.js"
                 :output-dir "target/cljs/node_dev/out"
                 :source-map true}}]
-   :test-commands {"test" ["phantomjs" "phantom/unit-test.js" "phantom/unit-test.html"]}})
+   :test-commands {"test" ["node" "resources/run.js"]}})
