@@ -8,8 +8,8 @@
   {:dev {:plugins [[lein-cljsbuild "1.1.0"]]
          :aliases {"nodetest" ["do" "clean," "cljsbuild" "once" "node-dev"]}}}
 
-  :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "1.7.145"]
+  :dependencies [[org.clojure/clojure "1.7.0" :scope "provided"]
+                 [org.clojure/clojurescript "1.7.145" :scope "provided"]
                  [org.clojure/core.match "0.3.0-alpha4"]
                  [org.clojure/test.check "0.8.2"]
                  [prismatic/schema "1.0.1"]

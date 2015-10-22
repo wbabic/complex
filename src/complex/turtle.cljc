@@ -9,37 +9,53 @@
                :cljs
                [cljs.core.match :refer-macros [match]])))
 
+(def negative-one (minus one))
+(def negative-i (minus i))
+
 ;; 3 genearlized circles
 (def x-axis      [zero one infinity])
 (def y-axis      [zero i infinity])
-(def unit-circle [one i (minus one)])
+(def unit-circle [one i negative-one])
 (def circles     [x-axis y-axis unit-circle])
 (def circle-keys [:x-axis :y-axis :unit-circle])
 
 ;; 6 points
-(def points      [zero infinity one (minus one) i (minus i)])
-(def point-keys  [:zero :infinity :one :minus-one :i :minus-1])
+(def points      [zero infinity one negative-one i negative-i])
 
-(def circle-map
+(def turtle-circles
   {:x-axis x-axis
    :y-axis y-axis
    :unit-circle unit-circle})
 
-(def point-map
+(def turtle-points
   {:zero zero
    :infinity infinity
    :one one
-   :minus-one (minus one)
+   :negative-one negative-one
    :i i
-   :minus-i (minus i)})
+   :negative-i negative-i})
 
-(def style-map
-  {:x-axis      {:stroke :green  :fill :lt-green}
-   :y-axis      {:stroke :purple :fill :lt-purple}
-   :unit-circle {:stroke :orange :fill :lt-orange}
-   :zero        {:stroke :grey   :fill :yellow}
-   :infinity    {:stroke :grey   :fill :black}
-   :one         {:stroke :grey   :fill :cyan}
-   :minus-one   {:stroke :grey   :fill :blue}
-   :i           {:stroke :grey   :fill :red}
-   :minus-i     {:stroke :grey   :fill :magenta}})
+(def default-turtle-style
+  {:x-axis       {:edge :green  :inside :lt-green}
+   :y-axis       {:edge :purple :inside :lt-purple}
+   :unit-circle  {:edge :orange :inside :lt-orange}
+   :zero         {:edge :grey   :inside :yellow}
+   :infinity     {:edge :grey   :inside :black}
+   :one          {:edge :grey   :inside :cyan}
+   :negative-one {:edge :grey   :inside :blue}
+   :i            {:edge :grey   :inside :red}
+   :negative-i   {:edge :grey   :inside :magenta}})
+
+(def standard-turtle
+  {:circles turtle-circles
+   :points turtle-points
+   :style default-turtle-style})
+
+(comment
+  (require '[complex.turtle] :reload)
+  (in-ns 'complex.turtle)
+  (use 'clojure.repl)
+  (require '[complex.turtle-test] :reload-all)
+  (in-ns 'complex.turtle-test)
+  (run-tests)
+  )

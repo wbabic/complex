@@ -87,7 +87,7 @@
       (is (= [0 0] (g/intersection l1 l2))))))
 
 (deftest circumcurcle
-  (testing "circumcrle of three points"
+  (testing "circumcirle of three points"
     (let [l [one i (minus one)]
           uc [:circle {:center [0 0] :radius 1.0}]]
       (is (= uc (g/circumcircle l))))))
