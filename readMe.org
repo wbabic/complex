@@ -196,7 +196,7 @@ test/complex/node_test_runner.cljs
     radius = a*abar - b
 
     example: z = (1 + it)/(1 - it)
-    z1 z0 zinfinity
+    z1 z0 z_infinity
 
     constructed and
     calibrated

@@ -6,7 +6,8 @@
             [complex.number-test]
             [complex.geometry-test]
             [complex.transform-test]
-            [complex.root-test]))
+            [complex.root-test]
+            [complex.turtle-test]))
 
 #?(:cljs [(enable-console-print!)])
 
@@ -17,7 +18,8 @@
            'complex.number-test
            'complex.geometry-test
            'complex.transform-test
-           'complex.root-test))
+           'complex.root-test
+           'complex.turtle-test))
        0
        1)
      :clj
@@ -26,6 +28,7 @@
            'complex.number-test
            'complex.geometry-test
            'complex.transform-test
-           'complex.root-test))
+           'complex.root-test
+           'complex.turtle-test))
        "Success"
        "Failure")))

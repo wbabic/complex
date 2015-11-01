@@ -45,7 +45,20 @@
    (g/circumcircle g-circle)])
 
 (defn render-line
-  [])
+  "render line l consisting of three collinear points
+  any of which may be infinity"
+  [l color-scheme]
+  (let [[z1 z2 z3] l
+        infinity? (some #(= infinity %) l)]
+    (if infinity?
+      [(l-style :s1 color-scheme)
+       (line z1 z2 z3)
+       (line z2 z3 z1)
+       (line z3 z1 z2)]
+      [(l-style :s1 color-scheme)
+       (line z1 z2 infinity)
+       (line infinity z1 z2)
+       (line z2 infinity z1)])))
 
 (defn render
   "transform generalized circle to
@@ -66,11 +79,17 @@
   (use 'clojure.repl)
 
   (require '[complex.turtle :as turtle])
-  (def st turtle/standard-turtle)
-  (render-circle (-> st :circles :unit-circle)
-                 (-> st :style :unit-circle))
-  )
+  (let [st turtle/standard-turtle]
+    (render-circle (-> st :circles :unit-circle)
+                   (-> st :style :unit-circle)))
+  ;;=> [[:style {:stroke :orange}] [:circle {:center [0N 0N], :radius 1.0}]]
 
-(comment
-  (require '[complex.turtle.render] :reload)
+  (let [st turtle/standard-turtle]
+    (render-line (-> st :circles :x-axis)
+                 (-> st :style :x-axis)))
+  ;;=>
+  [[:style {:stroke nil}]
+   [:line [0 0] [1 0]]
+   [:line [1 0] [100000 0]]
+   [:line [-99999 0] [0 0]]]
   )

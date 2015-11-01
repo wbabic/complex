@@ -52,9 +52,12 @@
    :style default-turtle-style})
 
 (comment
+  ;; play in repl in this namespace
   (require '[complex.turtle] :reload)
   (in-ns 'complex.turtle)
   (use 'clojure.repl)
+
+  ;; go run turtle tests
   (require '[complex.turtle-test] :reload-all)
   (in-ns 'complex.turtle-test)
   (run-tests)

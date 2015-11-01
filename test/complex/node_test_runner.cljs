@@ -4,7 +4,8 @@
             [complex.number-test]
             [complex.geometry-test]
             [complex.transform-test]
-            [complex.root-test]))
+            [complex.root-test]
+            [complex.turtle-test]))
 
 (nodejs/enable-util-print!)
 
@@ -13,6 +14,7 @@
    'complex.number-test
    'complex.geometry-test
    'complex.transform-test
-   'complex.root-test))
+   'complex.root-test
+   'complex.turtle-test))
 
 (set! *main-cli-fn* -main)
