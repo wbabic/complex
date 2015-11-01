@@ -38,41 +38,20 @@
           :else [z1 z2])]
     [:line (coords w1) (coords w2)]))
 
-(comment
-  points (cond-> []
-           (not (= infinity z1))
-           (into [(p-style :p1 color-scheme)
-                  [:point (coords z1)]])
-
-           (not (= infinity z2))
-           (into [(p-style :p2 color-scheme)
-                  [:point (coords z2)]])
-
-           (not (= infinity z3))
-           (into [(p-style :p3 color-scheme)
-                  [:point (coords z3)]])))
-
-(defn render-line
-  "render line l consisting of three collinear points
-  any of which may be infinity"
-  [l color-scheme]
-  (let [[z1 z2 z3] l
-        infinity? (some #(= infinity %) l)]
-    (if infinity?
-      [(l-style :s1 color-scheme)
-       (line z1 z2 z3)
-       (line z2 z3 z1)
-       (line z3 z1 z2)]
-      [(l-style :s1 color-scheme)
-       (line z1 z2 infinity)
-       (line infinity z1 z2)
-       (line z2 infinity z1)])))
-
 (defn render-circle
   "assumes g-circle is not a line"
-  [g-circle style]
-  [(stroke-style (:edge style))
-   (g/circumcircle g-circle)])
+  [g-circle color-scheme]
+  (assert (not (g/collinear? g-circle)))
+  (let [[z1 z2 z3] g-circle
+        [a1 a2 a3] (args z1 z2 z3)
+
+        [p1 p2 p3] (mapv coords g-circle)
+        circle (g/circumcircle g-circle)
+        {:keys [center radius]} (second circle)
+
+        circ [(l-style :s1 color-scheme)
+              circle]]
+    (concat circ points)))
 
 (defn render
   "transform generalized circle to
@@ -96,4 +75,8 @@
   (def st turtle/standard-turtle)
   (render-circle (-> st :circles :unit-circle)
                  (-> st :style :unit-circle))
+  )
+
+(comment
+  (require '[complex.turtle.render] :reload)
   )
