@@ -40,18 +40,12 @@
 
 (defn render-circle
   "assumes g-circle is not a line"
-  [g-circle color-scheme]
-  (assert (not (g/collinear? g-circle)))
-  (let [[z1 z2 z3] g-circle
-        [a1 a2 a3] (args z1 z2 z3)
+  [g-circle circle-style]
+  [(stroke-style (:edge circle-style))
+   (g/circumcircle g-circle)])
 
-        [p1 p2 p3] (mapv coords g-circle)
-        circle (g/circumcircle g-circle)
-        {:keys [center radius]} (second circle)
-
-        circ [(l-style :s1 color-scheme)
-              circle]]
-    (concat circ points)))
+(defn render-line
+  [])
 
 (defn render
   "transform generalized circle to
