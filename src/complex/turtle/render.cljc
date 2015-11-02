@@ -78,7 +78,7 @@ of the given turtle"
   (concat
    ;; render lines
    (render-line   (-> turtle :circles :x-axis) (-> turtle :style :x-axis))
-   (render-line   (-> turtle :circles :y-axis) (-> turtle :style :yh-axis))
+   (render-line   (-> turtle :circles :y-axis) (-> turtle :style :y-axis))
    (render-circle (-> turtle :circles :unit-circle)
                   (-> turtle :style :unit-circle))
    ;; render points
@@ -129,7 +129,7 @@ of the given turtle"
   ;;=>
   ([:style {:stroke :green}]
    [:line [0 0] [1 0]] [:line [1 0] [100000 0]] [:line [-99999 0] [0 0]]
-   [:style {:stroke nil}]
+   [:style {:stroke :purple}]
    [:line [0 0] [0 1]] [:line [0 1] [0 100000]] [:line [0 -99999] [0 0]]
    [:style {:stroke :orange}]
    [:circle {:center [0N 0N], :radius 1.0}]
