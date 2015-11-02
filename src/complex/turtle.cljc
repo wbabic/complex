@@ -12,16 +12,12 @@
 (def negative-one (minus one))
 (def negative-i (minus i))
 
-;; 3 genearlized circles
+;; 3 generalized circles
 (def x-axis      [zero one infinity])
 (def y-axis      [zero i infinity])
 (def unit-circle [one i negative-one])
-(def circles     [x-axis y-axis unit-circle])
-(def circle-keys [:x-axis :y-axis :unit-circle])
 
-;; 6 points
-(def points      [zero infinity one negative-one i negative-i])
-
+;; a turtle has three circles and six points
 (def turtle-circles
   {:x-axis x-axis
    :y-axis y-axis
