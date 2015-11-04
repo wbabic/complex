@@ -2,6 +2,7 @@
   (:require
    [complex.number :as n
     :refer [mult div add sub minus recip infinity zero one i coords arg length conjugate]]
+   [complex.turtle :as turtle]
    [complex.geometry :as g]
    #?(:clj
       [clojure.core.match :refer [match]]
