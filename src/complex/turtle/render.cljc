@@ -57,19 +57,21 @@
        (line z2 infinity z1)])))
 
 (defn render-point
-  "render point with given color inside
-  defaults to grey edge"
-  [point color]
-  [(point-style (:inside color))
-   [:point (coords point)]])
+  [point-keyword turtle]
+  (let [point-value (get-in turtle [:points point-keyword])
+        point-style-map (get-in turtle [:style point-keyword])]
+    [(point-style (:inside point-style-map))
+     [:point (coords point-value)]]))
 
-(defn render
-  "transform generalized circle to
-  a sequence of graphics primitives to be rendered"
-  [circle-or-line color-scheme]
-  (if (g/collinear? circle-or-line)
-    (render-line circle-or-line color-scheme)
-    (render-circle circle-or-line color-scheme)))
+(defn render-circle-or-line
+  [circle-keyword turtle]
+  (let [circle-points (turtle/points-for-circle
+                       circle-keyword
+                       (:points turtle))
+        circle-style (get-in turtle [:style circle-keyword])]
+    (if (g/collinear? circle-points)
+      (render-line circle-points circle-style)
+      (render-circle circle-points circle-style))))
 
 (defn render-turtle
   "render circles first, then points,
@@ -77,55 +79,45 @@ of the given turtle"
   [turtle]
   (concat
    ;; render lines
-   (render-line   (-> turtle :circles :x-axis) (-> turtle :style :x-axis))
-   (render-line   (-> turtle :circles :y-axis) (-> turtle :style :y-axis))
-   (render-circle (-> turtle :circles :unit-circle)
-                  (-> turtle :style :unit-circle))
+   (render-circle-or-line :x-axis turtle)
+   (render-circle-or-line :y-axis turtle)
+   (render-circle-or-line :unit-circle turtle)
+
    ;; render points
-   (render-point  (-> turtle :points :one)
-                  (-> turtle :style :one))
-   (render-point  (-> turtle :points :i)
-                  (-> turtle :style :i))
-   (render-point  (-> turtle :points :zero)
-                  (-> turtle :style :zero))
-   (render-point  (-> turtle :points :infinity)
-                  (-> turtle :style :infinity))
-   (render-point  (-> turtle :points :negative-one)
-                  (-> turtle :style :negative-one))
-   (render-point  (-> turtle :points :negative-i)
-                  (-> turtle :style :negative-i))))
+   (render-point :one turtle)
+   (render-point :i turtle)
+   (render-point :zero turtle)
+   (render-point :infinity turtle)
+   (render-point :negative-one turtle)
+   (render-point :negative-i turtle)))
 
 (comment
   (require '[complex.turtle.render] :reload)
   (in-ns 'complex.turtle.render)
   (use 'clojure.repl)
+  (require '[complex.turtle :as turtle] :reload)
 
-  (require '[complex.turtle :as turtle])
-  (let [st turtle/standard-turtle]
-    (render-circle (-> st :circles :unit-circle)
-                   (-> st :style :unit-circle)))
+  (render-circle-or-line :unit-circle turtle/standard-turtle)
   ;;=> [[:style {:stroke :orange}] [:circle {:center [0N 0N], :radius 1.0}]]
 
-  (let [st turtle/standard-turtle]
-    (render-line (-> st :circles :x-axis)
-                 (-> st :style :x-axis)))
+  (render-circle-or-line :x-axis turtle/standard-turtle)
   ;;=>
-  [[:style {:stroke nil}]
+  [[:style {:stroke :green}]
    [:line [0 0] [1 0]]
    [:line [1 0] [100000 0]]
    [:line [-99999 0] [0 0]]]
 
-  (let [st turtle/standard-turtle]
-    (render-line (-> st :circles :y-axis)
-                 (-> st :style :y-axis)))
+  (render-circle-or-line :y-axis turtle/standard-turtle)
   ;;=>
-  [[:style {:stroke nil}]
+  [[:style {:stroke :purple}]
    [:line [0 0] [0 1]]
    [:line [0 1] [0 100000]]
    [:line [0 -99999] [0 0]]]
 
-  (let [st turtle/standard-turtle]
-    (render-turtle st))
+  (render-point :zero turtle/standard-turtle)
+  ;;=> [[:style {:stroke :yellow, :fill :grey}] [:point [0 0]]]
+
+  (render-turtle turtle/standard-turtle)
   ;;=>
   ([:style {:stroke :green}]
    [:line [0 0] [1 0]] [:line [1 0] [100000 0]] [:line [-99999 0] [0 0]]

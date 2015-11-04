@@ -3,19 +3,15 @@
   (:require [complex.number :as n
              :refer [infinity zero one i minus]]
             [complex.geometry :as g]
-            [complex.transform :as t]
-            #?(:clj
-               [clojure.core.match :refer [match]]
-               :cljs
-               [cljs.core.match :refer-macros [match]])))
+            [complex.transform :as t]))
 
 (def negative-one (minus one))
 (def negative-i (minus i))
 
 ;; 3 generalized circles
-(def x-axis      [zero one infinity])
-(def y-axis      [zero i infinity])
-(def unit-circle [one i negative-one])
+(def x-axis      [:zero :one :infinity])
+(def y-axis      [:zero :i :infinity])
+(def unit-circle [:one :i :negative-one])
 
 ;; a turtle has three circles and six points
 (def turtle-circles
@@ -23,13 +19,16 @@
    :y-axis y-axis
    :unit-circle unit-circle})
 
-(def turtle-points
+(def turtle-point-map
   {:zero zero
    :infinity infinity
    :one one
    :negative-one negative-one
    :i i
    :negative-i negative-i})
+
+(def turtle-point-keys
+  [:zero :infinity :one :negative-one :i :negative-i])
 
 (def default-turtle-style
   {:x-axis       {:edge :green  :inside :lt-green}
@@ -44,8 +43,11 @@
 
 (def standard-turtle
   {:circles turtle-circles
-   :points turtle-points
+   :points turtle-point-map
    :style default-turtle-style})
+
+(defn points-for-circle [circle-keyword point-map]
+  (mapv (fn [k] (k point-map)) (circle-keyword turtle-circles)))
 
 (comment
   ;; play in repl in this namespace

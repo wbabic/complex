@@ -18,19 +18,15 @@
 
 (deftest render-unit-circle
   (testing "render unit-circle"
-    (let [st turtle/standard-turtle
-          unit-circle (-> st :circles :unit-circle)
-          unit-circle-style (-> st :style :unit-circle)]
+    (let [st turtle/standard-turtle]
       (is (= [[:style {:stroke :orange}] [:circle {:center [0N 0N], :radius 1.0}]]
-             (render/render-circle unit-circle unit-circle-style))))))
+             (render/render-circle-or-line :unit-circle st))))))
 
 (deftest render-x-axis
   (testing "render x-axis"
-    (let [st turtle/standard-turtle
-          x-axis (-> st :circles :x-axis)
-          x-axis-style (-> st :style :x-axis)]
-      (is (= [[:style {:stroke nil}]
+    (let [st turtle/standard-turtle]
+      (is (= [[:style {:stroke :green}]
               [:line [0 0] [1 0]]
               [:line [1 0] [100000 0]]
               [:line [-99999 0] [0 0]]]
-             (render/render-line x-axis x-axis-style))))))
+             (render/render-circle-or-line :x-axis st))))))
