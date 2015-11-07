@@ -1,12 +1,9 @@
 (ns complex.turtle
   "namspace for turtle definition and operations"
   (:require [complex.number :as n
-             :refer [infinity zero one i minus]]
+             :refer [infinity zero one i negative-one negative-i]]
             [complex.geometry :as g]
             [complex.transform :as t]))
-
-(def negative-one (minus one))
-(def negative-i (minus i))
 
 ;; 3 generalized circles
 (def x-axis      [:zero :one :infinity])

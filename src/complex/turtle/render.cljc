@@ -13,7 +13,7 @@
   [:style {:stroke color}])
 
 (defn point-style [color]
-  [:style {:stroke color :fill :grey}])
+  [:style {:stroke :grey :fill color}])
 
 (defn plus-infinity
   "return large point on line from z1 to z2
@@ -58,11 +58,14 @@
        (line z2 infinity z1)])))
 
 (defn render-point
+  "render point if not infinity
+or nil it point is infinity"
   [point-keyword turtle]
   (let [point-value (get-in turtle [:points point-keyword])
         point-style-map (get-in turtle [:style point-keyword])]
-    [(point-style (:inside point-style-map))
-     [:point (coords point-value)]]))
+    (when-not (= point-value infinity)
+      [(point-style (:inside point-style-map))
+       [:point (coords point-value)]])))
 
 (defn render-circle-or-line
   [circle-keyword turtle]
@@ -132,8 +135,6 @@ of the given turtle"
    [:point [0 1]]
    [:style {:stroke :yellow, :fill :grey}]
    [:point [0 0]]
-   [:style {:stroke :black, :fill :grey}]
-   [:point :infinity]
    [:style {:stroke :blue, :fill :grey}]
    [:point [-1 0]]
    [:style {:stroke :magenta, :fill :grey}]

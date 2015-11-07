@@ -1,14 +1,16 @@
 (ns complex.pencil
   "namspace for pencils of generalized circle"
   (:require [complex.number :as n
-             :refer [infinity zero one i minus]]
-            [complex.turtle :as turtle :refer [unit-circle x-axis y-axis]]
-            [complex.geometry :as g]
+             :refer [infinity zero one i negative-one negative-i]]
             [complex.transform :as t]
             #?(:clj
                [clojure.core.match :refer [match]]
                :cljs
                [cljs.core.match :refer-macros [match]])))
+
+(def x-axis      [zero one infinity])
+(def y-axis      [zero i infinity])
+(def unit-circle [one i negative-one])
 
 ;; pencil creating functions
 (defn pencil-iteration
@@ -61,47 +63,6 @@
     (if center
       (pencil-iteration center unit-circle f num-steps)
       (pencil-iteration unit-circle f num-steps))))
-
-;; some smaple data to describe pencils
-;; moving to the outsdie of the generalized circle
-(def pencil-data
-  "data describing a pencil"
-  [[:up {:delta 1 :num-steps 4}]
-   [:up {:delta 1 :num-steps 4 :center [1 1]}]
-   [:up {:delta -1 :num-steps 4 :center [0 0]}]
-
-   [:right {:delta 1 :num-steps 4 :center [0 0]}]
-   [:right {:delta 1 :num-steps 4 :center [1 1]}]
-   [:right {:delta -1 :num-steps 4 :center [0 0]}]
-
-   [:around {:delta 30 :num-steps 5 :center [0 0]}]
-   [:around {:delta 30 :num-steps 5 :center [1 1]}]
-   [:around {:delta -30 :num-steps 5 :center [0 0]}]
-
-   [:outward {:delta (/ 2) :num-steps 4 :center [0 0]}]
-   [:outward {:delta (/ 2) :num-steps 4 :center [1 1]}]
-   [:outward {:delta 2 :num-steps 4 :center [0 0]}]
-   [:outward {:delta 2 :num-steps 4 :center [1 1]}]]
-  )
-
-(def iterations
-  [[:up 1]
-   [:up -1]
-   [:right 1]
-   [:right -1]
-   [:out 2]
-   [:out (/ 2)]
-   [:around [:degrees 30]]
-   [:around [:degrees -30]]
-   [:around [:tau (/ 12)]]
-   [:around [:tau (/ 24)]]])
-
-(def pencils
-  [{:center [0 0]
-    :iter [:up 1]
-    :num-steps 5
-    :trails false
-    :time-between-steps 100}])
 
 ;; separate geometric transfromation from style transformation
 ;; for easir development and testing

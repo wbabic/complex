@@ -65,6 +65,8 @@
 
 (def one (c [1 0]))
 (def i (c [0 1]))
+(def negative-one (minus one))
+(def negative-i (minus i))
 
 (defn polar->rect
   ([angle] (polar->rect 1 angle))
