@@ -33,8 +33,7 @@
   where z1 and z2 are complex numbers"
   [z1 z2]
   (let [l (g/param-line z1 z2)
-        l-max (l 100000)
-        len (length l-max)]
+        l-max (l 100000)]
     l-max))
 
 (defn line
@@ -66,13 +65,14 @@
   (let [[z1 z2] segment]
     [(plus-infinity z2 z1) (plus-infinity z1 z2)]))
 
-(defn inside-rect
+(defn inside-quad
   "return inside extended rectangle for given extended line segment"
   [extended-line-segment]
   (let [[ez1 ez2] extended-line-segment
-        lower-left ez1
-        upper-right (n/add ez2 (n/mult i (n/sub ez2 ez1)))]
-    [lower-left upper-right]))
+        perp (n/mult i (n/sub ez2 ez1))
+        ez3 (n/add ez2 perp)
+        ez4 (n/add ez1 perp)]
+    [ez1 ez2 ez3 ez4]))
 
 (comment
   (map coords
@@ -81,23 +81,28 @@
   ;;=> ([-99999 0] [100000 199999])
   )
 
-(defn render-inside
+(defn render-inside-line
   "render inside of line l consisting of three collinear points
   any of which may be infinity"
   [l line-style]
-  (let [rect (-> l
+  (let [quad (-> l
                  to-line-segment
                  extend-segment
-                 inside-rect)
-        rect (map coords rect)]
+                 inside-quad)
+        quad (map coords quad)]
     [(fill-style (:inside line-style))
-     [:rect rect]]))
+     (into [:quad] quad)]))
 
 (comment
-  (render-inside [zero one infinity] {:edge :red :inside :lt-red})
+  (render-inside-line [zero one infinity] {:edge :red :inside :lt-red})
   ;;=>
   [[:style {:fill :lt-red}]
-   [:rect ([-99999 0] [100000 199999])]]
+   [:quad [-99999 0] [100000 0] [100000 199999] [-99999 199999]]]
+
+  (render-inside-line [zero i infinity] {:edge :blue :inside :lt-blue})
+  ;;=>
+  [[:style {:fill :lt-blue}]
+   [:quad [0 -99999] [0 100000] [-199999 100000] [-199999 -99999]]]
   )
 
 (defn render-edge
@@ -122,7 +127,7 @@
   [l line-style]
   (concat
    (render-edge l line-style)
-   (render-inside l line-style)))
+   (render-inside-line l line-style)))
 
 (comment
   (render-line [zero one infinity] {:edge :red :inside :lt-red})
@@ -132,7 +137,7 @@
    [:line [1 0] [100000 0]]
    [:line [-99999 0] [0 0]]
    [:style {:fill :lt-red}]
-   [:rect ([-99999 0] [100000 199999])])
+   [:rect [-99999 0] [100000 199999]])
   )
 
 (defn render-circle
@@ -187,12 +192,12 @@ of the given turtle"
 
   (render-circle-or-line :y-axis turtle/standard-turtle)
   ;;=>
-  ([:style {:stroke :green}]
-   [:line [0 0] [1 0]]
-   [:line [1 0] [100000 0]]
-   [:line [-99999 0] [0 0]]
-   [:style {:fill :lt-green}]
-   [:rect ([-99999 0] [100000 199999])])
+  ([:style {:stroke :purple}]
+   [:line [0 0] [0 1]]
+   [:line [0 1] [0 100000]]
+   [:line [0 -99999] [0 0]]
+   [:style {:fill :lt-purple}]
+   [:rect [0 -99999] [-199999 100000]])
 
   (render-point :zero turtle/standard-turtle)
   ;;=> [[:style {:stroke :yellow, :fill :grey}] [:point [0 0]]]
@@ -204,13 +209,13 @@ of the given turtle"
    [:line [1 0] [100000 0]]
    [:line [-99999 0] [0 0]]
    [:style {:fill :lt-green}]
-   [:rect ([-99999 0] [100000 199999])]
+   [:rect [-99999 0] [100000 199999]]
    [:style {:stroke :purple}]
    [:line [0 0] [0 1]]
    [:line [0 1] [0 100000]]
    [:line [0 -99999] [0 0]]
    [:style {:fill :lt-purple}]
-   [:rect ([0 -99999] [-199999 100000])]
+   [:rect [0 -99999] [-199999 100000]]
    [:style {:stroke :orange}]
    [:circle {:center [0N 0N], :radius 1.0}]
    [:style {:stroke :grey, :fill :cyan}]

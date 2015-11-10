@@ -28,5 +28,7 @@
       (is (= [[:style {:stroke :green}]
               [:line [0 0] [1 0]]
               [:line [1 0] [100000 0]]
-              [:line [-99999 0] [0 0]]]
+              [:line [-99999 0] [0 0]]
+              [:style {:fill :lt-green}]
+              [:quad [-99999 0] [100000 0] [100000 199999] [-99999 199999]]]
              (render/render-circle-or-line :x-axis st))))))
