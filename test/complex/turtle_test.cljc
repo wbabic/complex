@@ -19,7 +19,10 @@
 (deftest render-unit-circle
   (testing "render unit-circle"
     (let [st turtle/standard-turtle]
-      (is (= [[:style {:stroke :orange}] [:circle {:center [0N 0N], :radius 1.0}]]
+      (is (= [[:style {:stroke :orange}]
+              [:circle {:center [0N 0N], :radius 1.0}]
+              [:style {:fill :lt-orange}]
+              [:disk {:center [0N 0N], :radius 1.0}]]
              (render/render-circle-or-line :unit-circle st))))))
 
 (deftest render-x-axis

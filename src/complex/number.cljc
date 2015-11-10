@@ -160,6 +160,14 @@
   [[a1 b1] [a2 b2]]
   (add (mult a1 a2) (mult b1 b2)))
 
+(defn cross
+  "returns 3d vector of z1 cross z2
+where z1 and z2 are treated as vectors in a plane"
+  [z1 z2]
+  (let [[x1 y1] (coords z1)
+        [x2 y2] (coords z2)]
+    (v/cross-3d [x1 y1 0] [x2 y2 0])))
+
 (defn sqrt
   "square root of given number"
   [n]

@@ -4,6 +4,7 @@
     :refer [infinity zero one i negative-one negative-i coords]]
    [complex.turtle :as turtle]
    [complex.geometry :as g]
+   [complex.vector :as v]
    #?(:clj
       [clojure.core.match :refer [match]]
       :cljs
@@ -140,11 +141,43 @@
    [:rect [-99999 0] [100000 199999]])
   )
 
+(defn clockwise?
+  "return true if given generalized circle is clockwise"
+  ([c] (let [std-circle (g/circumcircle c)]
+         (clockwise? c std-circle)))
+  ([c std-circle]
+   (let [[z1 z2 z3] c
+         center (n/c (get-in std-circle [1 :center]))
+         p (g/circle z1 z2 z3)
+         p0 (p 0)
+         p1 (p (/ 2))
+         w0 (n/sub center p0)
+         w1 (n/sub center p1)
+         cross (n/cross p0 p1)
+         [_ _ z] cross]
+     (> z 0))))
+
+(defn render-circle-edge
+  "assumes g-circle is not a line"
+  [std-circle color]
+  [(stroke-style color)
+   std-circle])
+
+(defn render-circle-inside
+  "assumes g-circle is not a line"
+  [g-circle std-circle color]
+  (let [clockwise (clockwise? g-circle std-circle)]
+    (when clockwise
+      [(fill-style color)
+       [:disk (get-in std-circle [1])]])))
+
 (defn render-circle
   "assumes g-circle is not a line"
   [g-circle circle-style]
-  [(stroke-style (:edge circle-style))
-   (g/circumcircle g-circle)])
+  (let [std-circle (g/circumcircle g-circle)]
+    (concat
+     (render-circle-edge std-circle (:edge circle-style))
+     (render-circle-inside g-circle std-circle (:inside circle-style)))))
 
 (defn render-circle-or-line
   [circle-keyword turtle]
@@ -181,7 +214,11 @@ of the given turtle"
   (require '[complex.turtle :as turtle] :reload)
 
   (render-circle-or-line :unit-circle turtle/standard-turtle)
-  ;;=> [[:style {:stroke :orange}] [:circle {:center [0N 0N], :radius 1.0}]]
+  ;;=>
+  ([:style {:stroke :orange}]
+   [:circle {:center [0N 0N], :radius 1.0}]
+   [:style {:fill :lt-orange}]
+   [:disk {:center [0N 0N], :radius 1.0}])
 
   (render-circle-or-line :x-axis turtle/standard-turtle)
   ;;=>

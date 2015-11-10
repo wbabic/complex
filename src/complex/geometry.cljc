@@ -83,18 +83,26 @@
          S-inv (fn [w] (mult (recip r) (add w (minus Q))))]
      (comp S T S-inv))))
 
+(comment
+  (coords ((inversion) zero))
+  ;;=> :infinity
+  (coords ((inversion) infinity))
+  ;;=> [0 0]
+  )
+
 ;; parameterized circles
 ;; from deaux
 (defn param-circle
   "returns a parameterized circle
-  given four complex numbers
-  where :infinity is an accepted value"
+  given four complex numbers a b c d
+  (a*t + b)/(c*t + d) for parameter t
+  where :infinity is an accepted parameter"
   [a b c d]
   (fn [t]
     (if (= t :infinity)
       (div a c)
       (div (add (mult a t) b)
-                   (add (mult c t) d)))))
+           (add (mult c t) d)))))
 
 (defn three-point->param
   [p q r]
@@ -125,6 +133,12 @@
   (let [[_ alpha alpha-bar beta] (param->general a b c d)]
     [:circle {:center (coords (minus alpha-bar))
               :radius (length (sub (mult alpha alpha-bar) beta))}]))
+
+(comment
+  (def unit-circle [one i (minus one)])
+  (apply param->standard (apply three-point->param unit-circle))
+  [:circle {:center [0 0], :radius 1.0}]
+  )
 
 ;; representation of circles and lines by hermitian matrices
 ;; from schwerdtfeger
@@ -255,7 +269,7 @@ need A and B to be real and B anc C complex conjugates"
 (comment
   (require 'complex.geometry :reload)
   (in-ns 'complex.geometry)
-
+  (use 'clojure.repl)
   )
 
 (comment
