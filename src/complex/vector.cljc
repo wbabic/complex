@@ -66,3 +66,17 @@
 (defn scale
   ([s] (scale s s))
   ([sx sy] (fn [[x y]] [(* sx x) (* sy y)])))
+
+(defn det-2d
+  ""
+  [[a1 a2] [b1 b2]]
+  (- (* a1 b2) (* a2 b1)))
+
+;; cross product
+(defn cross-3d
+  "return cross product of two 3d vactors "
+  [[a1 a2 a3] [b1 b2 b3]]
+  (let [c1 (det-2d [a2 a3] [b2 b3])
+        c2 (det-2d [a1 a3] [b1 b3])
+        c3 (det-2d [a1 a2] [b1 b2])]
+    [c1 (- c2) c3]))
