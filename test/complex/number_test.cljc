@@ -4,13 +4,14 @@
     :refer [mult div add sub minus recip infinity zero one i coords arg length]]
    [clojure.test.check :as tc]
    [clojure.test.check.generators :as gen]
-   [clojure.test.check.properties :as prop]
    #?@(:clj
        [[clojure.test :refer :all]
-        [clojure.test.check.clojure-test :refer [defspec]]]
+        [clojure.test.check.clojure-test :refer [defspec]]
+        [clojure.test.check.properties :as prop]]
        :cljs
        [[cljs.test :as text :refer-macros [is deftest are testing run-tests]]
-        [clojure.test.check.clojure-test :refer-macros [defspec]]])))
+        [clojure.test.check.clojure-test :refer-macros [defspec]]
+        [clojure.test.check.properties :as prop :include-macros true]])))
 
 (deftest test-arg
   (testing "complex arg"

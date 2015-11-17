@@ -1,19 +1,19 @@
-(defproject complex "0.1.8"
+(defproject complex "0.1.9"
   :description "Cross platform library for complex numbers. geometry and transforms"
   :url "http://wbabic.github.io"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies [[org.clojure/clojure "1.7.0" :scope "provided"]
-                 [org.clojure/clojurescript "1.7.145" :scope "provided"]
+                 [org.clojure/clojurescript "1.7.170" :scope "provided"]
                  [org.clojure/core.match "0.3.0-alpha4"]
                  [com.gfredericks/exact "0.1.8"]]
 
   :profiles
   {:dev
-   {:dependencies [[org.clojure/test.check "0.8.2"]
-                   [prismatic/schema "1.0.1"]]
-    :plugins [[lein-cljsbuild "1.1.0"]]
+   {:dependencies [[org.clojure/test.check "0.9.0"]
+                   [prismatic/schema "1.0.3"]]
+    :plugins [[lein-cljsbuild "1.1.1"]]
     :aliases {"nodetest" ["do" "clean," "cljsbuild" "once" "node-dev"]}}}
 
   :cljsbuild
