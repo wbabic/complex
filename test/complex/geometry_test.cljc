@@ -6,12 +6,13 @@
    [complex.geometry :as g]
    [clojure.test.check :as tc]
    [clojure.test.check.generators :as gen]
-   [clojure.test.check.properties :as prop]
    #?@(:clj
        [[clojure.test :refer :all]
-        [clojure.test.check.clojure-test :refer [defspec]]]
+        [clojure.test.check.clojure-test :refer [defspec]]
+        [clojure.test.check.properties :as prop]]
        :cljs
-       [[cljs.test :as text :refer-macros [is deftest are testing run-tests]]
+       [[clojure.test.check.clojure-test :refer-macros [defspec]]
+        [cljs.test :as text :refer-macros [is deftest are testing run-tests]]
         [clojure.test.check.clojure-test :include-macros true]])))
 
 (deftest inversion-test
@@ -86,7 +87,7 @@
           l2 [zero i]]
       (is (= [0 0] (g/intersection l1 l2))))))
 
-(deftest circumcurcle
+(deftest circumcircle
   (testing "circumcirle of three points"
     (let [l [one i (minus one)]
           uc [:circle {:center [0 0] :radius 1.0}]]
@@ -105,7 +106,6 @@
   ;; to run these tests from a clojure repl:
   (require 'complex.geometry-test :reload)
   (in-ns 'complex.geometry-test)
-  (clojure.test/run-tests)
-  ;; or
-  (clojure.test/run-tests 'complex.geometry-test)
+  (run-tests)
+
   )

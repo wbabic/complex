@@ -3,7 +3,6 @@
    [complex.number :as n
     :refer [mult div add sub minus recip infinity zero one i coords arg length conjugate]]
    [complex.vector :as v]
-   [schema.core :as s :include-macros true]
    #?(:clj
       [clojure.core.match :refer [match]]
       :cljs
