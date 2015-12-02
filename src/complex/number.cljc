@@ -175,6 +175,15 @@ where z1 and z2 are treated as vectors in a plane"
         n-pos-sqrt (Math/sqrt n-pos)]
     (c [0 n-pos-sqrt])))
 
+(defn pow
+  "raise complex number z to the nth power
+  where n is given ineger"
+  [z n]
+  (assert (integer? n) "n must be an integer")
+  (loop [w z n n]
+    (cond (zero? n) one
+          (= 1 n) w
+          :else (recur (mult w z) (dec n)))))
 (comment
   ;; from the clojure repl
   (require '[complex.number] :reload)
