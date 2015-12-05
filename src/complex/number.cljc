@@ -133,14 +133,16 @@
 
 (defn div
   "divide two complex numbers"
-  [z w]
-  (cond
-    (and (= z infinity) (= w infinity)) undefined
-    (and (= z zero) (= w zero)) undefined
-    (= w infinity) zero
-    (= z zero) zero
-    (= w zero) infinity
-    :else (times z (recip w))))
+  ([] one)
+  ([z] (div one z))
+  ([z w]
+   (cond
+     (and (= z infinity) (= w infinity)) undefined
+     (and (= z zero) (= w zero)) undefined
+     (= w infinity) zero
+     (= z zero) zero
+     (= w zero) infinity
+     :else (times z (recip w)))))
 
 (defn len-sq [z]
   (let [w (mult z (conjugate z))
