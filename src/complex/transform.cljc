@@ -62,8 +62,8 @@
 
 (defn rotation
   "return the mobius transformation
-  of a rotation about origin by
-  given degrees"
+  of a rotation about P, if given, or origin otherwise,
+  by given degrees"
   ([degrees]
    (scale (n/complex-polar degrees)))
   ([P degrees]
