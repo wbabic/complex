@@ -11,7 +11,7 @@
   )
 
 (defn cross-ratio
-  "the cross tatio of 4 complex numbers"
+  "the cross ratio of 4 complex numbers"
   [z1 z2 z3 z4]
   (div (* (sub z1 z3) (sub z2 z4))
        (* (sub z2 z3) (sub z1 z4))))

@@ -1,7 +1,7 @@
-(ns complex.vector)
-;; vector and matrix operations
-;; vector
-;; sum product dot len-sq len angle scale-mul
+(ns complex.vector
+  "vector and matrix operations
+  for 2d vectors
+  sum product dot len-sq len angle scale-mul")
 
 (defn sum
   "sum two vectors"

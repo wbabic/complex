@@ -38,6 +38,14 @@ and runs the built target from nodejs:
 which calls the -main function in
 test/complex/node_test_runner.cljs
 
+*** to install locally
+
+   #+BEGIN_SRC sh
+     git clone git@github.com:wbabic/complex.git
+     cd complex
+     lein install
+   #+END_SRC
+
 ** Implementation
 *** Terms
     complex number
