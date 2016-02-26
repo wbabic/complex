@@ -17,8 +17,8 @@
   (recip [z] "one over z")
   (conjugate [z] "the conjugate of z")
   (length [z] "the length of z")
-
   (arg [z] "the argument of z"))
+
 (defn rad->deg [rad]
   (* rad (/ 360 TAU)))
 
