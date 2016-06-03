@@ -93,6 +93,20 @@
           uc [:circle {:center [0 0] :radius 1.0}]]
       (is (= uc (g/circumcircle l))))))
 
+(deftest circle
+  (testing "parameter equation for circle"
+    (let [c (g/circle one (n/c [(/ 2) (/ 2)]) zero)]
+      (is (= [1 0] (n/coords (c 0))))
+      (is (= [(/ 2) (/ 2)] (n/coords (c 1))))
+      (is (= [0 0] (n/coords (c :infinity)))))))
+
+(deftest line
+  (testing "parameter equation for circle when points are collinear"
+    (let [l (g/circle zero one (n/c [2 0]))]
+      (is (= [0 0] (n/coords (l 0))))
+      (is (= [1 0] (n/coords (l 1))))
+      (is (= [2 0] (n/coords (l :infinity)))))))
+
 (comment
   (def gen-circle
     (gen/vector nt/complex-gen 3))
@@ -107,5 +121,4 @@
   (require 'complex.geometry-test :reload)
   (in-ns 'complex.geometry-test)
   (run-tests)
-
   )

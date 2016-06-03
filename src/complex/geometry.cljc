@@ -83,6 +83,8 @@
      (comp S T S-inv))))
 
 (comment
+  (require '[complex.geometry] :reload)
+  (in-ns 'complex.geometry)
   (coords ((inversion) zero))
   ;;=> :infinity
   (coords ((inversion) infinity))

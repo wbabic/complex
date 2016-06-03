@@ -1,6 +1,6 @@
-(defproject complex "0.1.9"
-  :description "Cross platform library for extended complex numbers, geometry and transforms"
-  :url "http://wbabic.github.io/complex"
+(defproject complex "0.1.10"
+  :description "Cross platform library for complex numbers. geometry and transforms"
+  :url "http://wbabic.github.io"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
